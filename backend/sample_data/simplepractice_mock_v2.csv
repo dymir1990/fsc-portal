@@ -1,0 +1,6 @@
+Client,Client type,Date added,Primary clinician,Start time,End time,Minutes,Primary insurance,Billing route,Status,Notes
+Jordyn Fields,Minor,10/01/2025,Lauren Rivera,09:00 AM,09:45 AM,45,Medicaid,simplepractice,completed,
+Marcus Allen,Adult,10/01/2025,David Chen,10:30 AM,11:20 AM,50,Medicare,simplepractice,completed,
+Sofia Patel,Adult,10/02/2025,Lauren Rivera,01:00 PM,01:55 PM,55,Aetna,portal,submitted,
+Noah Ramirez,Minor,10/02/2025,David Chen,02:15 PM,03:00 PM,45,AmeriHealth,portal,completed,
+Layla Brooks,Adult,10/03/2025,Lauren Rivera,11:30 AM,12:20 PM,50,Oscar Health Insurance,portal,completed,

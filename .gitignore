@@ -1,0 +1,22 @@
+cat > .gitignore <<'EOF'
+# Node / Svelte
+frontend/node_modules/
+frontend/.svelte-kit/
+frontend/.vite/
+frontend/dist/
+frontend/build/
+npm-debug.log
+
+# Python
+backend/venv/
+**/__pycache__/
+*.pyc
+# Environment / secrets
+.env
+backend/.env
+frontend/.env
+
+# OS / editor
+.DS_Store
+.vscode/
+.idea/
