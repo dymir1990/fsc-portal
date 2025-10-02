@@ -55,3 +55,32 @@ Quick, targeted guidance for AI coding agents working on the FSC Portal reposito
   - UI quick wins (done): header now shows a live backend health indicator (`/health`) in `frontend/src/routes/+layout.svelte`. Small spinner/CSS added to `frontend/src/app.css`.
 
 If any of the above sections are unclear or you want the file to contain more examples (e.g., common SQL migrations in `sql/`), tell me what to expand and I will iterate.
+
+## One-click Safe Push Workflow
+
+To streamline commits and protect against accidental key leaks or unwanted history overwrites, a helper script `scripts/auto_push.sh` is available.
+
+Usage:
+```
+chmod +x scripts/auto_push.sh  # first time only
+./scripts/auto_push.sh         # normal safe push
+./scripts/auto_push.sh --force # only if remote diverged and you intentionally want to overwrite (force-with-lease)
+```
+
+What it does:
+- Verifies repository context.
+- Scans tracked files for private key patterns (`id_ed25519`, `*.pem`, `*.key`). Aborts if any are found.
+- Stages all changes and creates a generic commit if there are staged diffs.
+- Ensures the current branch is `main` (renames if not).
+- Fetches `origin/main` and detects divergence.
+- Performs a normal push when fast-forward or first push.
+- Requires explicit `--force` flag to perform a `--force-with-lease` push when histories diverge.
+
+Agent Guidance:
+- Before instructing the user to deploy (Render or Vercel), first ask them to run the safe push script if there are unpushed changes.
+- Never suggest a plain `git push --force`; prefer the script or `--force-with-lease` explicitly.
+- If the script aborts due to divergence and the user is unsure, prompt them to inspect remote logs rather than forcing immediately.
+
+Future Enhancements (optional):
+- Add a pre-push Git hook replicating the key scan logic for contributors not using the script.
+- Extend script to run minimal build/lint (`npm run build` / `npm run check`) before pushing.
