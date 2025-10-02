@@ -3,4 +3,3 @@ uvicorn[standard]
 supabase
 python-dotenv
 python-multipart
-git show HEAD:backend/requirements.txt | grep multipart || echo "NOT THERE"
