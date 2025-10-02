@@ -1,16 +1,4 @@
 {
   "version": 2,
-  "framework": "sveltekit",
-  "env": {
-    "PUBLIC_SUPABASE_URL": "@public-supabase-url",
-    "PUBLIC_SUPABASE_ANON_KEY": "@public-supabase-anon-key",
-    "PUBLIC_BACKEND_URL": "https://REPLACE_WITH_RENDER_BACKEND_URL"
-  },
-  "build": {
-    "env": {
-      "PUBLIC_SUPABASE_URL": "@public-supabase-url",
-      "PUBLIC_SUPABASE_ANON_KEY": "@public-supabase-anon-key",
-      "PUBLIC_BACKEND_URL": "https://REPLACE_WITH_RENDER_BACKEND_URL"
-    }
-  }
+  "framework": "sveltekit"
 }
