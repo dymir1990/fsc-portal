@@ -2,6 +2,12 @@
   import favicon from '$lib/assets/favicon.svg';
   import '/src/app.css';
   import { PUBLIC_BACKEND_URL } from '$env/static/public';
+  // Build identifier (replace at build time via Vite define or env-pass). For now, inject from a global if present.
+  // We'll attempt to read a window.__BUILD_HASH set in app.html (optional). Fallback to 'dev'.
+  let buildHash: string = 'dev';
+  if (typeof window !== 'undefined' && (window as any).__BUILD_HASH) {
+    buildHash = (window as any).__BUILD_HASH;
+  }
 
   let { children } = $props();
   import { onMount } from 'svelte';
@@ -32,7 +38,8 @@
 
 <header class="sticky top-0 z-10 border-b border-gray-200 bg-brand-600/90 backdrop-blur">
   <div class="mx-auto flex max-w-6xl items-center justify-between px-5 py-3 text-white">
-    <a href="/dashboard" class="font-semibold tracking-wide">FSC Portal</a>
+  <a href="/dashboard" class="font-semibold tracking-wide">FSC Portal</a>
+  <span class="ml-3 rounded bg-white/10 px-2 py-0.5 text-[11px] font-mono opacity-80">{buildHash}</span>
     <nav class="space-x-4 text-sm">
       <a class="hover:underline" href="/dashboard">Dashboard</a>
       <a class="hover:underline" href="/case-manager/import">Import</a>
