@@ -1,0 +1,99 @@
+             <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1400 1020" width="1400" height="1020" style="font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;">
+  <style>
+    .panel { fill: #ffffff; stroke: #d2d6dc; stroke-width: 2; rx: 18; }
+    .header { fill: #2563eb; opacity: 0.88; }
+    .label { font-size: 18px; font-weight: 600; fill: #1f2937; }
+    .subtext { font-size: 14px; fill: #6b7280; }
+    .card { fill: #f9fafb; stroke: #e5e7eb; stroke-width: 1.5; rx: 12; }
+    .accent { fill: #047857; }
+    .chip { fill: #ecfeff; stroke: #0f766e; stroke-width: 1; rx: 9; }
+    .bg { fill: #f3f4f6; }
+    .heading { font-size: 26px; font-weight: 700; fill: #111827; }
+  </style>
+
+  <rect class="bg" x="0" y="0" width="1400" height="1020" rx="32" />
+  <text x="50" y="70" class="heading">FSC Portal · Current UI Overview</text>
+  <text x="50" y="102" class="subtext">High-level wireframe pulled from existing Svelte routes (landing, auth, dashboard, import, billing, reports).</text>
+
+  <!-- Landing Redirect Panel -->
+  <g transform="translate(40, 140)">
+    <rect class="panel" width="400" height="240" />
+    <rect class="header" x="0" y="0" width="400" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Landing Redirect</text>
+    <text class="label" x="24" y="92">Spinner + Status</text>
+    <text class="subtext" x="24" y="120">Checks Supabase session then routes to login or dashboard.</text>
+    <rect class="card" x="26" y="140" width="348" height="68" />
+    <circle class="accent" cx="60" cy="174" r="14" fill="#2563eb" />
+    <text class="subtext" x="92" y="181">“Checking session…” messaging with fallback link.</text>
+  </g>
+
+  <!-- Login Panel -->
+  <g transform="translate(480, 140)">
+    <rect class="panel" width="400" height="240" />
+    <rect class="header" x="0" y="0" width="400" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Login · Magic Link</text>
+    <rect class="card" x="30" y="80" width="340" height="130" />
+    <rect x="50" y="102" width="300" height="34" rx="8" fill="#ffffff" stroke="#93c5fd" stroke-width="1.5" />
+    <text class="subtext" x="50" y="96">Email input, supabase.auth.signInWithOtp</text>
+    <rect x="50" y="150" width="200" height="34" rx="8" fill="#2563eb" opacity="0.9" />
+    <text x="62" y="172" font-size="15" font-weight="600" fill="#ffffff">Send Magic Link</text>
+    <text class="subtext" x="30" y="226">Supporting message displayed beneath the form.</text>
+  </g>
+
+  <!-- Dashboard Panel -->
+  <g transform="translate(920, 140)">
+    <rect class="panel" width="430" height="240" />
+    <rect class="header" x="0" y="0" width="430" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Dashboard</text>
+    <text class="label" x="28" y="94">Welcome + Quick Actions</text>
+    <text class="subtext" x="28" y="122">Shows supabase user email with sign-out.</text>
+    <rect class="card" x="28" y="140" width="180" height="80" />
+    <text class="subtext" x="40" y="168">Import CSV</text>
+    <rect class="card" x="228" y="140" width="180" height="80" />
+    <text class="subtext" x="240" y="168">Open Supabase</text>
+  </g>
+
+  <!-- Import Flow Panel -->
+  <g transform="translate(40, 410)">
+    <rect class="panel" width="640" height="340" />
+    <rect class="header" x="0" y="0" width="640" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Case Manager · Import</text>
+    <text class="label" x="28" y="96">Two-column layout: quick links + import workflow</text>
+    <rect class="card" x="28" y="122" width="170" height="184" />
+    <text class="subtext" x="44" y="150">Quick Links</text>
+    <line x1="60" y1="164" x2="156" y2="164" stroke="#cbd5f5" stroke-width="1.5" />
+    <line x1="60" y1="190" x2="156" y2="190" stroke="#cbd5f5" stroke-width="1.5" />
+    <line x1="60" y1="216" x2="156" y2="216" stroke="#cbd5f5" stroke-width="1.5" />
+    <rect class="card" x="220" y="122" width="380" height="90" />
+    <text class="subtext" x="240" y="150">Import instructions + payer reference selector (auto loads from Supabase)</text>
+    <rect class="card" x="220" y="226" width="380" height="110" stroke-dasharray="6 6" fill="#f0fdf4" />
+    <text class="subtext" x="240" y="256">Drag & drop CSV upload with Upload CTA</text>
+    <rect class="card" x="220" y="350" width="380" height="60" fill="#fffbeb" stroke="#fcd34d" />
+    <text class="subtext" x="240" y="380">Flagged preview list (first 10 rows)</text>
+  </g>
+
+  <!-- Billing Panel -->
+  <g transform="translate(720, 410)">
+    <rect class="panel" width="300" height="340" />
+    <rect class="header" x="0" y="0" width="300" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Billing</text>
+    <text class="label" x="24" y="96">Queue Preview</text>
+    <text class="subtext" x="24" y="126">Spinner while awaiting Supabase session, then empty state card.</text>
+    <rect class="card" x="24" y="150" width="252" height="140" />
+    <text class="subtext" x="40" y="182">Empty state: “No billing items yet”</text>
+  </g>
+
+  <!-- Reports Panel -->
+  <g transform="translate(1040, 410)">
+    <rect class="panel" width="320" height="340" />
+    <rect class="header" x="0" y="0" width="320" height="52" rx="18" />
+    <text x="20" y="32" fill="#ffffff" font-size="18" font-weight="600">Reports</text>
+    <text class="label" x="24" y="96">Analytics Cards</text>
+    <text class="subtext" x="24" y="126">Three placeholder tiles for sessions, flag rate, duplicates.</text>
+    <rect class="card" x="24" y="150" width="120" height="120" />
+    <rect class="card" x="164" y="150" width="120" height="120" />
+    <rect class="card" x="94" y="290" width="120" height="120" />
+  </g>
+
+  <text class="subtext" x="50" y="980">Source of truth: Svelte components under `frontend/src/routes`. Diagram meant for quick orientation / design conversations.</text>
+</svg>
