@@ -60,3 +60,8 @@ frontend/.env
 .vscode/
 .idea/
 .vercel
+frontend/.env
+backend/.env
+node_modules/
+venv/
+.DS_Store
