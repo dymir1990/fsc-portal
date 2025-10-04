@@ -17,8 +17,8 @@
 		<nav class="hidden sm:flex gap-6 text-sm">
 			<a href="/" class="hover:text-white">Home</a>
 			<a href="/dashboard" class="hover:text-white">Dashboard</a>
-			<a href="/import" class="hover:text-white">Import</a>
-			<a href="/auth" class="hover:text-white">Sign in</a>
+			<a href="/case-manager/import" class="hover:text-white">Import</a>
+			<a href="/login" class="hover:text-white">Sign in</a>
 		</nav>
 	</header>
 

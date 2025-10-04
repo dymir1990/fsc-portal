@@ -1,15 +1,45 @@
 <script lang="ts">
+  import { api, supabase } from '$lib';
+
   let file: File | null = null;
   let msg = $state('');
+  let uploading = $state(false);
 
   async function upload() {
     if (!file) { msg = 'Pick a CSV first.'; return; }
+
+    const { data } = await supabase.auth.getSession();
+    const token = data.session?.access_token;
+    if (!token) {
+      msg = 'Sign in again to upload.';
+      return;
+    }
+
     const body = new FormData();
     body.append('file', file);
 
-    // Call your FastAPI endpoint
-    const res = await fetch('http://localhost:8001/api/imports/simplepractice', { method: 'POST', body });
-    msg = res.ok ? 'Uploaded. Check dashboard for counts.' : `Error: ${await res.text()}`;
+    uploading = true;
+    msg = 'Uploading…';
+
+    try {
+      const res = await fetch(api('/api/imports/simplepractice'), {
+        method: 'POST',
+        headers: { Authorization: `Bearer ${token}` },
+        body
+      });
+
+      if (!res.ok) {
+        const detail = await res.text();
+        throw new Error(detail || res.statusText);
+      }
+
+      msg = 'Uploaded. Check dashboard for counts.';
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Upload failed.';
+      msg = `Error: ${message}`;
+    } finally {
+      uploading = false;
+    }
   }
 </script>
 
@@ -23,7 +53,9 @@
   <div class="flex items-center gap-3">
     <input type="file" accept=".csv" on:change={(e:any) => file = e.target.files?.[0] ?? null}
            class="block w-full text-sm file:mr-3 file:px-3 file:py-2 file:rounded file:bg-slate-100 file:border file:text-slate-600" />
-    <button class="rounded bg-blue-600 text-white px-4 py-2" on:click={upload}>Upload</button>
+    <button class="rounded bg-blue-600 text-white px-4 py-2 disabled:opacity-50" on:click={upload} disabled={uploading}>
+      {uploading ? 'Uploading…' : 'Upload'}
+    </button>
   </div>
 
   {#if msg}<p class="text-sm text-slate-600">{msg}</p>{/if}
