@@ -31,15 +31,17 @@
   let loadingPayers = $state(true);
   let result = $state<ImportResult | null>(null);
 
-  $effect(async () => {
-    loadingPayers = true;
-    const { data } = await supabase
-      .from('payers')
-      .select('id, name, billing_route, status')
-      .eq('status', 'Active')
-      .order('name');
-    payers = (data as Payer[]) ?? [];
-    loadingPayers = false;
+  $effect(() => {
+    (async () => {
+      loadingPayers = true;
+      const { data } = await supabase
+        .from('payers')
+        .select('id, name, billing_route, status')
+        .eq('status', 'Active')
+        .order('name');
+      payers = (data as Payer[]) ?? [];
+      loadingPayers = false;
+    })();
   });
 
   async function upload() {
@@ -91,9 +93,9 @@
   </div>
 
   <div class="flex items-center gap-3">
-    <input type="file" accept=".csv" on:change={(e:any) => file = e.target.files?.[0] ?? null}
+    <input type="file" accept=".csv" onchange={(e:any) => file = e.target.files?.[0] ?? null}
            class="block w-full text-sm file:mr-3 file:px-3 file:py-2 file:rounded file:bg-slate-100 file:border file:text-slate-600" />
-    <button class="rounded bg-blue-600 text-white px-4 py-2 disabled:opacity-50" on:click={upload} disabled={uploading}>
+    <button class="rounded bg-blue-600 text-white px-4 py-2 disabled:opacity-50" onclick={upload} disabled={uploading}>
       {uploading ? 'Uploading…' : 'Upload'}
     </button>
   </div>

@@ -30,53 +30,55 @@
   let recentImports = $state<ImportRun[]>([]);
   let loading = $state(true);
 
-  $effect(async () => {
-    loading = true;
+  $effect(() => {
+    (async () => {
+      loading = true;
 
-    // Fetch session stats
-    const { data: sessions } = await supabase
-      .from('sessions')
-      .select('id, note_submitted')
-      .limit(1000);
+      // Fetch session stats
+      const { data: sessions } = await supabase
+        .from('sessions')
+        .select('id, note_submitted')
+        .limit(1000);
 
-    if (sessions) {
-      stats.total = sessions.length;
-      stats.submitted = sessions.filter(s => s.note_submitted).length;
-      stats.pending = sessions.filter(s => !s.note_submitted).length;
-    }
+      if (sessions) {
+        stats.total = sessions.length;
+        stats.submitted = sessions.filter(s => s.note_submitted).length;
+        stats.pending = sessions.filter(s => !s.note_submitted).length;
+      }
 
-    // Fetch flagged count from import staging
-    const { count: flaggedCount } = await supabase
-      .from('import_staging')
-      .select('*', { count: 'exact', head: true });
+      // Fetch flagged count from import staging
+      const { count: flaggedCount } = await supabase
+        .from('import_staging')
+        .select('*', { count: 'exact', head: true });
 
-    stats.flagged = flaggedCount ?? 0;
+      stats.flagged = flaggedCount ?? 0;
 
-    // Fetch recent sessions with client/provider names
-    const { data: recent } = await supabase
-      .from('sessions')
-      .select(`
-        id,
-        session_date,
-        note_submitted,
-        clients(name),
-        providers(name)
-      `)
-      .order('imported_at', { ascending: false })
-      .limit(10);
+      // Fetch recent sessions with client/provider names
+      const { data: recent } = await supabase
+        .from('sessions')
+        .select(`
+          id,
+          session_date,
+          note_submitted,
+          clients(name),
+          providers(name)
+        `)
+        .order('imported_at', { ascending: false })
+        .limit(10);
 
-    recentSessions = (recent as Session[]) ?? [];
+      recentSessions = (recent as unknown as Session[]) ?? [];
 
-    // Fetch recent import runs
-    const { data: imports } = await supabase
-      .from('import_runs')
-      .select('id, source, file_name, started_at, total_rows, inserted_rows, flagged_rows')
-      .order('started_at', { ascending: false })
-      .limit(5);
+      // Fetch recent import runs
+      const { data: imports } = await supabase
+        .from('import_runs')
+        .select('id, source, file_name, started_at, total_rows, inserted_rows, flagged_rows')
+        .order('started_at', { ascending: false })
+        .limit(5);
 
-    recentImports = (imports as ImportRun[]) ?? [];
+      recentImports = (imports as ImportRun[]) ?? [];
 
-    loading = false;
+      loading = false;
+    })();
   });
 
   const formatDate = (dateStr: string) => {

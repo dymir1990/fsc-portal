@@ -1,9 +1,12 @@
-<script lang="ts">
-	import Hero from '$lib/marketing/Hero.svelte';
-</script>
-
 <div class="min-h-screen bg-white">
-	<Hero />
+	<div class="bg-gradient-to-br from-blue-50 to-slate-100 py-20">
+		<div class="mx-auto max-w-4xl px-6 text-center">
+			<h1 class="text-4xl font-bold text-slate-900">FSC Portal</h1>
+			<p class="mt-4 text-lg text-slate-600">
+				All your billing & compliance, in one place.
+			</p>
+		</div>
+	</div>
 	<section class="mx-auto max-w-5xl px-6 pb-24">
 		<div class="mt-16 grid gap-8 md:grid-cols-3">
 			<div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">

@@ -16,24 +16,26 @@
   let q = $state('');
   let loading = $state(true);
 
-  $effect(async () => {
-    loading = true;
-    const { data } = await supabase
-      .from('sessions')
-      .select(`
-        id,
-        session_date,
-        client_id,
-        provider_id,
-        minutes,
-        note_submitted,
-        clients(name),
-        providers(name)
-      `)
-      .order('session_date', { ascending: false })
-      .limit(50);
-    rows = (data as Session[]) ?? [];
-    loading = false;
+  $effect(() => {
+    (async () => {
+      loading = true;
+      const { data } = await supabase
+        .from('sessions')
+        .select(`
+          id,
+          session_date,
+          client_id,
+          provider_id,
+          minutes,
+          note_submitted,
+          clients(name),
+          providers(name)
+        `)
+        .order('session_date', { ascending: false })
+        .limit(50);
+      rows = (data as unknown as Session[]) ?? [];
+      loading = false;
+    })();
   });
 
   const filtered = () => {

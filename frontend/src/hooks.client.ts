@@ -1,6 +1,7 @@
 import { supabase } from '$lib/supabaseClient';
+import type { Handle } from '@sveltejs/kit';
 
-export const handle = async ({ event, resolve }) => {
+export const handle: Handle = async ({ event, resolve }) => {
   // Let login page always render
   if (event.url.pathname.startsWith('/login')) return resolve(event);
 
