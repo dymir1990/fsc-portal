@@ -9,26 +9,42 @@ from supabase import create_client, Client
 load_dotenv()
 SUPABASE_URL = os.environ["SUPABASE_URL"]
 SUPABASE_SERVICE_ROLE_KEY = os.environ["SUPABASE_SERVICE_ROLE_KEY"]
-ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "")
+ALLOWED_ORIGIN = os.getenv("ALLOWED_ORIGIN", "https://app.fscnj.com")
 
 SB: Client = create_client(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY)
 
 app = FastAPI()
 
+# Parse comma-separated origins, with production default
 origins = [o.strip() for o in ALLOWED_ORIGIN.split(",") if o.strip()]
+
+# Add common development origins if not in production
+if not any('fscnj.com' in o for o in origins):
+    origins.extend([
+        "http://localhost:5173",
+        "http://localhost:5174",
+        "http://127.0.0.1:5173"
+    ])
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins or ["*"],
+    allow_origins=origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
+    allow_headers=["Content-Type", "Authorization"],
 )
 
 # --- routes ---
 @app.get("/health")
 def health():
     return {"ok": True}
+
+@app.get("/api/payers")
+def get_payers(current_user = Depends(require_user)):
+    """Get all active payers with their billing routes."""
+    _ = current_user  # auth check
+    payers = SB.table("payers").select("id,name,billing_route,status").eq("status", "Active").order("name").execute()
+    return {"payers": payers.data}
 
 # --- helpers ---
 def find_provider(name: str | None):

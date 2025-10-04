@@ -1,18 +1,27 @@
 <script lang="ts">
   import { supabase } from '$lib/supabaseClient';
-  let email = $state('');
+  import { onMount } from 'svelte';
+  import { goto } from '$app/navigation';
 
-  async function sendLink() {
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    alert(error ? `Error: ${error.message}` : 'Check your email for the magic link.');
-  }
+  let loading = $state(true);
+
+  onMount(async () => {
+    const { data: { session } } = await supabase.auth.getSession();
+
+    if (session) {
+      goto('/dashboard');
+    } else {
+      goto('/login');
+    }
+  });
 </script>
 
-<div class="max-w-md mx-auto bg-white shadow rounded p-6 space-y-4">
-  <h1 class="text-xl font-semibold">Welcome back</h1>
-  <input class="w-full border rounded px-3 py-2" placeholder="you@fscnj.com" bind:value={email} />
-  <button class="w-full rounded bg-blue-600 text-white py-2" on:click={sendLink}>
-    Send magic link
-  </button>
-</div>
+{#if loading}
+  <div class="min-h-screen grid place-items-center">
+    <div class="text-center space-y-3">
+      <div class="inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-blue-600 border-r-transparent"></div>
+      <p class="text-slate-600">Loading...</p>
+    </div>
+  </div>
+{/if}
 

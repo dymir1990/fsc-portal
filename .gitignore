@@ -7,19 +7,28 @@ Thumbs.db
 
 # --- Node / Frontend ---
 node_modules/
+frontend/node_modules/
 frontend/.svelte-kit/
+frontend/.vite/
 frontend/build/
+frontend/dist/
 frontend/.vercel/
+.vercel/
 
 # --- Python / Backend ---
 backend/venv/
+venv/
 __pycache__/
+**/__pycache__/
 *.py[cod]
+*.pyc
 
 # --- Environment & Secrets ---
 .env
 *.env
 .env.*
+backend/.env
+frontend/.env
 *.pem
 *.key
 
@@ -37,31 +46,3 @@ yarn-error.log*
 
 # --- Misc ---
 coverage/
-cat > .gitignore <<'EOF'
-# Node / Svelte
-frontend/node_modules/
-frontend/.svelte-kit/
-frontend/.vite/
-frontend/dist/
-frontend/build/
-npm-debug.log
-
-# Python
-backend/venv/
-**/__pycache__/
-*.pyc
-# Environment / secrets
-.env
-backend/.env
-frontend/.env
-
-# OS / editor
-.DS_Store
-.vscode/
-.idea/
-.vercel
-frontend/.env
-backend/.env
-node_modules/
-venv/
-.DS_Store
