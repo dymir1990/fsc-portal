@@ -1,22 +1,25 @@
 <script>
   import { supabase } from '$lib/supabaseClient';
   import { goto } from '$app/navigation';
-  
+
   let email = $state('');
   let password = $state('');
   let error = $state('');
+  let success = $state('');
   let loading = $state(false);
+  let showForgotPassword = $state(false);
 
   async function handleSignIn() {
     loading = true;
     error = '';
-    
+    success = '';
+
     try {
       const { data, error: signInError } = await supabase.auth.signInWithPassword({
         email,
         password
       });
-      
+
       if (signInError) {
         error = signInError.message;
       } else {
@@ -29,6 +32,34 @@
       loading = false;
     }
   }
+
+  async function handleForgotPassword() {
+    if (!email) {
+      error = 'Please enter your email address';
+      return;
+    }
+
+    loading = true;
+    error = '';
+    success = '';
+
+    try {
+      const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: `${window.location.origin}/reset-password`,
+      });
+
+      if (resetError) {
+        error = resetError.message;
+      } else {
+        success = 'Password reset link sent! Check your email.';
+        showForgotPassword = false;
+      }
+    } catch (e) {
+      error = 'Failed to send reset email. Please try again.';
+    } finally {
+      loading = false;
+    }
+  }
 </script>
 
 <div class="signin-container">
@@ -36,11 +67,15 @@
     <h1>FSC Portal</h1>
     <p class="subtitle">Staff Sign In</p>
     
-    <form onsubmit={(e) => { e.preventDefault(); handleSignIn(); }}>
+    <form onsubmit={(e) => { e.preventDefault(); showForgotPassword ? handleForgotPassword() : handleSignIn(); }}>
       {#if error}
         <div class="error">{error}</div>
       {/if}
-      
+
+      {#if success}
+        <div class="success">{success}</div>
+      {/if}
+
       <div class="form-group">
         <label for="email">Email</label>
         <input
@@ -51,21 +86,37 @@
           required
         />
       </div>
-      
-      <div class="form-group">
-        <label for="password">Password</label>
-        <input
-          id="password"
-          type="password"
-          bind:value={password}
-          placeholder="••••••••"
-          required
-        />
-      </div>
-      
+
+      {#if !showForgotPassword}
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input
+            id="password"
+            type="password"
+            bind:value={password}
+            placeholder="••••••••"
+            required
+          />
+        </div>
+      {/if}
+
       <button type="submit" disabled={loading}>
-        {loading ? 'Signing in...' : 'Sign In'}
+        {#if loading}
+          {showForgotPassword ? 'Sending...' : 'Signing in...'}
+        {:else}
+          {showForgotPassword ? 'Send Reset Link' : 'Sign In'}
+        {/if}
       </button>
+
+      <div class="forgot-password-toggle">
+        <button
+          type="button"
+          class="text-link"
+          onclick={() => { showForgotPassword = !showForgotPassword; error = ''; success = ''; }}
+        >
+          {showForgotPassword ? '← Back to Sign In' : 'Forgot Password?'}
+        </button>
+      </div>
     </form>
   </div>
 </div>
@@ -154,5 +205,35 @@
     border-radius: 6px;
     margin-bottom: 1rem;
     font-size: 0.9rem;
+  }
+
+  .success {
+    background: #e6ffe6;
+    color: #2d7a2d;
+    padding: 0.75rem;
+    border-radius: 6px;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+  }
+
+  .forgot-password-toggle {
+    margin-top: 1rem;
+    text-align: center;
+  }
+
+  .text-link {
+    background: none;
+    border: none;
+    color: #667eea;
+    cursor: pointer;
+    font-size: 0.9rem;
+    padding: 0.5rem;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+
+  .text-link:hover {
+    color: #5568d3;
+    text-decoration: underline;
   }
 </style>

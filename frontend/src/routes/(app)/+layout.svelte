@@ -18,10 +18,21 @@
       return;
     }
 
-    // TODO: Fetch actual role from user metadata or database
-    // For now, default to admin
-    const role = user.user_metadata?.role || 'admin';
-    userRole = role;
+    // Fetch actual role from profiles table
+    const { data: profile, error } = await supabase
+      .from('profiles')
+      .select('role')
+      .eq('id', user.id)
+      .single();
+
+    if (error || !profile) {
+      console.error('Failed to fetch user role:', error);
+      // Fallback to billing role if profile not found
+      userRole = 'billing';
+    } else {
+      userRole = profile.role;
+    }
+
     loading = false;
   });
 
