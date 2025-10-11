@@ -30,7 +30,7 @@ html {
 }
 
 body {
-	background: linear-gradient(to bottom right, oklch(0.98 0.01 250), oklch(0.96 0.02 280), oklch(0.97 0.015 330));
+	background: #ffffff;
 	color: oklch(0.20 0.08 250);
 	min-height: 100vh;
 }
