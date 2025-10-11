@@ -1,5 +1,5 @@
 import os, csv, io
-from datetime import datetime
+from datetime import datetime, timezone
 from fastapi import FastAPI, UploadFile, File, HTTPException, Header, Depends
 from fastapi.middleware.cors import CORSMiddleware
 from dotenv import load_dotenv
@@ -33,6 +33,25 @@ app.add_middleware(
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
 )
+
+def require_user(authorization: str | None = Header(default=None)):
+    if not authorization or not authorization.lower().startswith("bearer "):
+        raise HTTPException(401, "Missing or invalid authorization header")
+
+    token = authorization.split(" ", 1)[1].strip()
+    if not token:
+        raise HTTPException(401, "Missing access token")
+
+    try:
+        user_response = SB.auth.get_user(jwt=token)
+    except Exception as e:
+        raise HTTPException(401, "Auth check failed") from e
+
+    user = getattr(user_response, "user", None)
+    if not user:
+        raise HTTPException(401, "Invalid session")
+
+    return user
 
 # --- routes ---
 @app.get("/health")
@@ -122,29 +141,9 @@ def pick(row: dict, keys: list[str]) -> str | None:
     return None
 
 
-def require_user(authorization: str | None = Header(default=None)):
-    if not authorization or not authorization.lower().startswith("bearer "):
-        raise HTTPException(401, "Missing or invalid authorization header")
-
-    token = authorization.split(" ", 1)[1].strip()
-    if not token:
-        raise HTTPException(401, "Missing access token")
-
-    try:
-        user_response = SB.auth.get_user(jwt=token)
-    except Exception as e:
-        raise HTTPException(401, "Auth check failed") from e
-
-    user = getattr(user_response, "user", None)
-    if not user:
-        raise HTTPException(401, "Invalid session")
-
-    return user
-
-# --- endpoint ---
 @app.post("/api/imports/simplepractice")
 async def import_simplepractice(file: UploadFile = File(...), current_user = Depends(require_user)):
-    if not file.filename.lower().endswith(".csv"):
+    if not file.filename or not file.filename.lower().endswith(".csv"):
         raise HTTPException(400, "Please upload a .csv file.")
 
     # audit start
@@ -152,7 +151,7 @@ async def import_simplepractice(file: UploadFile = File(...), current_user = Dep
     run = SB.table("import_runs").insert({
         "source":"simplepractice",
         "file_name": file.filename,
-        "started_at": datetime.utcnow().isoformat()
+        "started_at": datetime.now(timezone.utc).isoformat()
     }).execute().data[0]
 
     total=inserted=updated=flagged=duplicates=0
@@ -212,7 +211,7 @@ async def import_simplepractice(file: UploadFile = File(...), current_user = Dep
                 "note_submitted": note_status in ("submitted","finalized","complete","completed"),
                 "external_source": "simplepractice",
                 "external_session_id": sp_id,
-                "imported_at": datetime.utcnow().isoformat(),
+                "imported_at": datetime.now(timezone.utc).isoformat(),
                 "client_type": client_type,
                 "primary_insurance": primary_ins,
                 "billing_route": billing_route,
@@ -252,7 +251,7 @@ async def import_simplepractice(file: UploadFile = File(...), current_user = Dep
             errors.append({"row": i, "error": str(e)})
 
     SB.table("import_runs").update({
-        "finished_at": datetime.utcnow().isoformat(),
+        "finished_at": datetime.now(timezone.utc).isoformat(),
         "total_rows": total,
         "inserted_rows": inserted,
         "updated_rows": updated,
