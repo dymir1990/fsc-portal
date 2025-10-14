@@ -1,6 +1,8 @@
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { supabase } from '$lib/supabaseClient';
+  import { PUBLIC_API_BASE } from '$env/static/public';
   
   let selectedFile = null;
   let uploading = false;
@@ -12,16 +14,9 @@
 
   // Get auth token from Supabase
   async function getAuthToken() {
-    const { createClient } = await import('@supabase/supabase-js');
-    const supabase = createClient(
-      import.meta.env.PUBLIC_SUPABASE_URL,
-      import.meta.env.PUBLIC_SUPABASE_ANON_KEY
-    );
-    
     const { data: { session } } = await supabase.auth.getSession();
     return session?.access_token;
-  }
-
+  
   // Load import history on mount
   onMount(async () => {
     await loadImportHistory();
@@ -31,11 +26,11 @@
     try {
       const token = await getAuthToken();
       if (!token) {
-        goto('/login');
+        goto('/login');cd
         return;
       }
 
-      const response = await fetch(`${import.meta.env.PUBLIC_API_BASE}/api/import/history`, {
+      const response = await fetch(`${PUBLIC_API_BASE}/api/import/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -128,7 +123,7 @@
         uploading = false;
       });
 
-      xhr.open('POST', `${import.meta.env.PUBLIC_API_BASE}/api/import`);
+      xhr.open('POST', `${PUBLIC_API_BASE}/api/import`);
       xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.send(formData);
 
