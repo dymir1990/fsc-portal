@@ -16,6 +16,7 @@
   async function getAuthToken() {
     const { data: { session } } = await supabase.auth.getSession();
     return session?.access_token;
+  }
   
   // Load import history on mount
   onMount(async () => {
@@ -26,7 +27,7 @@
     try {
       const token = await getAuthToken();
       if (!token) {
-        goto('/login');cd
+        goto('/login');
         return;
       }
 
