@@ -1,8 +1,12 @@
+<script context="module">
+  export const ssr = false;
+</script>
+
 <script>
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { supabase } from '$lib/supabaseClient';
-  import { PUBLIC_API_BASE } from '$env/static/public';
+  import { env } from '$env/dynamic/public';
   
   let selectedFile = null;
   let uploading = false;
@@ -31,7 +35,7 @@
         return;
       }
 
-      const response = await fetch(`${PUBLIC_API_BASE}/api/import/history`, {
+      const response = await fetch(`${env.PUBLIC_API_BASE}/api/import/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -124,7 +128,7 @@
         uploading = false;
       });
 
-      xhr.open('POST', `${PUBLIC_API_BASE}/api/import`);
+      xhr.open('POST', `${env.PUBLIC_API_BASE}/api/import`);
       xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.send(formData);
 
