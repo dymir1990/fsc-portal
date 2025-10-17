@@ -35,9 +35,12 @@ for domain in vercel_domains:
     if domain not in origins:
         origins.append(domain)
 
+# Add all vercel.app domains for flexibility
+origins.append("https://*.vercel.app")
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=origins,
+    allow_origins=["*"],  # Temporarily allow all origins for testing
     allow_credentials=True,
     allow_methods=["GET", "POST", "PUT", "DELETE", "OPTIONS"],
     allow_headers=["Content-Type", "Authorization"],
