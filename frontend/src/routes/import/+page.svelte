@@ -35,7 +35,7 @@
         return;
       }
 
-      const response = await fetch(`${env.PUBLIC_API_BASE}/api/import/history`, {
+      const response = await fetch(`${env.PUBLIC_API_BASE}/api/imports/history`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -242,38 +242,62 @@
       
       <div class="result-stats">
         <div class="stat-card success">
-          <h3>{uploadResult.summary?.total_imported || 0}</h3>
+          <h3>{uploadResult.inserted || 0}</h3>
           <p>Records Imported</p>
         </div>
         
-        {#if uploadResult.summary?.duplicates_found > 0}
+        {#if uploadResult.duplicates > 0}
           <div class="stat-card warning">
-            <h3>{uploadResult.summary.duplicates_found}</h3>
+            <h3>{uploadResult.duplicates}</h3>
             <p>Duplicates Found</p>
           </div>
         {/if}
         
-        {#if uploadResult.summary?.errors > 0}
+        {#if uploadResult.errors > 0}
           <div class="stat-card error">
-            <h3>{uploadResult.summary.errors}</h3>
+            <h3>{uploadResult.errors}</h3>
             <p>Errors</p>
+          </div>
+        {/if}
+        
+        {#if uploadResult.flagged > 0}
+          <div class="stat-card warning">
+            <h3>{uploadResult.flagged}</h3>
+            <p>Flagged Rows</p>
           </div>
         {/if}
       </div>
 
-      {#if uploadResult.duplicates && uploadResult.duplicates.length > 0}
+      {#if uploadResult.flagged_preview && uploadResult.flagged_preview.length > 0}
         <div class="duplicates-section">
-          <h3>Duplicate Records Detected</h3>
+          <h3>Flagged Records (Missing Data)</h3>
           <div class="duplicates-list">
-            {#each uploadResult.duplicates as duplicate}
+            {#each uploadResult.flagged_preview as flagged}
               <div class="duplicate-item">
                 <div class="duplicate-icon">⚠️</div>
                 <div class="duplicate-details">
-                  <p class="duplicate-name"><strong>{duplicate.client_name}</strong></p>
+                  <p class="duplicate-name"><strong>{flagged.client_name || 'Unknown Client'}</strong></p>
                   <p class="duplicate-info">
-                    Session: {duplicate.session_date} | Provider: {duplicate.provider_name}
+                    Date: {flagged.service_date || 'N/A'} | Provider: {flagged.provider_name || 'Unknown'}
                   </p>
-                  <p class="duplicate-reason">{duplicate.reason}</p>
+                  <p class="duplicate-reason">Reason: {flagged.reason}</p>
+                </div>
+              </div>
+            {/each}
+          </div>
+        </div>
+      {/if}
+      
+      {#if uploadResult.errors_detail && uploadResult.errors_detail.length > 0}
+        <div class="duplicates-section">
+          <h3>Import Errors</h3>
+          <div class="duplicates-list">
+            {#each uploadResult.errors_detail as err}
+              <div class="duplicate-item">
+                <div class="duplicate-icon">❌</div>
+                <div class="duplicate-details">
+                  <p class="duplicate-name"><strong>Row {err.row}</strong></p>
+                  <p class="duplicate-reason">{err.error}</p>
                 </div>
               </div>
             {/each}
@@ -297,13 +321,16 @@
               </svg>
             </div>
             <div class="history-details">
-              <p class="history-filename">{import_run.filename}</p>
-              <p class="history-date">{formatDate(import_run.imported_at)}</p>
+              <p class="history-filename">{import_run.file_name}</p>
+              <p class="history-date">{formatDate(import_run.started_at)}</p>
             </div>
             <div class="history-stats">
-              <span class="stat-badge success">{import_run.records_imported} imported</span>
-              {#if import_run.duplicates_found > 0}
-                <span class="stat-badge warning">{import_run.duplicates_found} duplicates</span>
+              <span class="stat-badge success">{import_run.inserted_rows || 0} imported</span>
+              {#if import_run.updated_rows > 0}
+                <span class="stat-badge warning">{import_run.updated_rows} updated</span>
+              {/if}
+              {#if import_run.flagged_rows > 0}
+                <span class="stat-badge warning">{import_run.flagged_rows} flagged</span>
               {/if}
             </div>
           </div>
