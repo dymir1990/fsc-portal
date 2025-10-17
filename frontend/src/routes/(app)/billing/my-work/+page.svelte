@@ -1,6 +1,7 @@
 <script lang="ts">
   import { supabase } from '$lib/supabaseClient';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
+  import { env } from '$env/dynamic/public';
 
   type BillingTask = {
     id: string;
@@ -29,28 +30,25 @@
   $effect(() => {
     (async () => {
       loading = true;
-      // Fetch sessions assigned to current user
-      const { data } = await supabase
-        .from('sessions')
-        .select(`
-          id,
-          session_date,
-          client_id,
-          provider_id,
-          minutes,
-          case_status,
-          auth_number,
-          claim_number,
-          submission_date,
-          notes,
-          clients(name),
-          providers(name),
-          payers(name, billing_route, portal_url)
-        `)
-        .eq('assigned_to', currentUserId)
-        .order('session_date', { ascending: false })
-        .limit(50);
-      tasks = (data as unknown as BillingTask[]) ?? [];
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          loading = false;
+          return;
+        }
+
+        const response = await fetch(`${env.PUBLIC_API_BASE}/api/sessions`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (response.ok) {
+          tasks = await response.json();
+        }
+      } catch (error) {
+        console.error('Error loading sessions:', error);
+      }
       loading = false;
     })();
   });

@@ -1,6 +1,7 @@
 <script lang="ts">
   import { supabase } from '$lib/supabaseClient';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
+  import { env } from '$env/dynamic/public';
 
   type Session = {
     id: string;
@@ -21,21 +22,25 @@
   $effect(() => {
     (async () => {
       loading = true;
-      const { data } = await supabase
-        .from('sessions')
-        .select(`
-          id,
-          session_date,
-          client_id,
-          provider_id,
-          minutes,
-          note_submitted,
-          clients(name),
-          providers(name)
-        `)
-        .order('session_date', { ascending: false })
-        .limit(50);
-      rows = (data as unknown as Session[]) ?? [];
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          loading = false;
+          return;
+        }
+
+        const response = await fetch(`${env.PUBLIC_API_BASE}/api/sessions`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (response.ok) {
+          rows = await response.json();
+        }
+      } catch (error) {
+        console.error('Error loading sessions:', error);
+      }
       loading = false;
     })();
   });

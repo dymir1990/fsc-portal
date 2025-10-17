@@ -84,6 +84,13 @@ def get_import_history(current_user = Depends(require_user)):
     history = SB.table("import_runs").select("id,file_name,started_at,finished_at,total_rows,inserted_rows,updated_rows,flagged_rows").order("started_at", desc=True).limit(10).execute()
     return history.data
 
+@app.get("/api/sessions")
+def get_sessions(current_user = Depends(require_user)):
+    """Get all sessions with client and provider details."""
+    _ = current_user  # auth check
+    sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,minutes,note_submitted,is_duplicate,clients(name),providers(name)").order("session_date", desc=True).limit(100).execute()
+    return sessions.data
+
 # --- helpers ---
 def find_provider(name: str | None):
     if not name: return None
