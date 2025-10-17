@@ -128,7 +128,7 @@
         uploading = false;
       });
 
-      xhr.open('POST', `${env.PUBLIC_API_BASE}/api/import`);
+      xhr.open('POST', `${env.PUBLIC_API_BASE}/api/imports/simplepractice`);
       xhr.setRequestHeader('Authorization', `Bearer ${token}`);
       xhr.send(formData);
 

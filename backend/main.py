@@ -77,6 +77,13 @@ def get_payers(current_user = Depends(require_user)):
     payers = SB.table("payers").select("id,name,billing_route,status").eq("status", "Active").order("name").execute()
     return {"payers": payers.data}
 
+@app.get("/api/imports/history")
+def get_import_history(current_user = Depends(require_user)):
+    """Get import history."""
+    _ = current_user  # auth check
+    history = SB.table("import_runs").select("id,file_name,started_at,finished_at,total_rows,inserted_rows,updated_rows,flagged_rows").order("started_at", desc=True).limit(10).execute()
+    return history.data
+
 # --- helpers ---
 def find_provider(name: str | None):
     if not name: return None

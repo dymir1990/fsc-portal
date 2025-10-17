@@ -1,0 +1,10 @@
+Client,Client type,Date added,Primary clinician,Start time,End time,Minutes,Primary insurance,Billing route,Status,Notes
+Alex Johnson,Adult,09/15/2025,Lauren Rivera,09:00 AM,09:50 AM,50,Horizon NJ Health (22356),simplepractice,completed,
+Brianna Smith,Minor,09/16/2025,Lauren Rivera,10:00 AM,10:45 AM,45,Aetna (80954),simplepractice,completed,
+Carlos Mendez,Adult,09/17/2025,David Chen,02:00 PM,02:55 PM,55,AmeriHealth (22110),portal,submitted,
+Diana Patel,Adult,09/18/2025,Lauren Rivera,11:00 AM,11:50 AM,50,Horizon NJ Health (22356),portal,completed,
+Ethan Brooks,Minor,09/19/2025,David Chen,01:00 PM,01:45 PM,45,United Healthcare (77102),simplepractice,in progress,
+Fiona Chen,Adult,09/20/2025,Lauren Rivera,03:00 PM,03:50 PM,50,Blue Cross Blue Shield,portal,completed,
+Gabriel Torres,Minor,09/21/2025,David Chen,09:30 AM,10:15 AM,45,Cigna,simplepractice,submitted,
+Alex Johnson,Adult,09/15/2025,Lauren Rivera,09:00 AM,09:50 AM,50,Horizon NJ Health (22356),simplepractice,completed,
+Diana Patel,Adult,09/18/2025,Lauren Rivera,11:00 AM,11:50 AM,50,Horizon NJ Health (22356),portal,completed,
