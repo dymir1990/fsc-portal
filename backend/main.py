@@ -26,6 +26,15 @@ if not any('fscnj.com' in o for o in origins):
         "http://127.0.0.1:5173"
     ])
 
+# Add Vercel domains for deployment
+vercel_domains = [
+    "https://fsc-portal-my54f0rua-dymirs-projects.vercel.app",
+    "https://fsc-portal-ko030riu2-dymirs-projects.vercel.app"
+]
+for domain in vercel_domains:
+    if domain not in origins:
+        origins.append(domain)
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=origins,
