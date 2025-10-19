@@ -2,6 +2,7 @@
   import { supabase } from '$lib/supabaseClient';
   import StatCard from '$lib/components/StatCard.svelte';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
+  import { env } from '$env/dynamic/public';
 
   type Session = {
     id: string;
@@ -36,48 +37,44 @@
     (async () => {
       loading = true;
 
-      // Fetch session stats
-      const { data: sessions } = await supabase
-        .from('sessions')
-        .select('id, note_submitted')
-        .limit(1000);
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session?.access_token) {
+          loading = false;
+          return;
+        }
 
-      if (sessions) {
-        stats.total = sessions.length;
-        stats.submitted = sessions.filter(s => s.note_submitted).length;
-        stats.pending = sessions.filter(s => !s.note_submitted).length;
+        // Fetch sessions from backend API
+        const sessionsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/sessions`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (sessionsResponse.ok) {
+          const sessions = await sessionsResponse.json();
+          stats.total = sessions.length;
+          stats.pending = sessions.filter(s => !s.note_submitted).length;
+          stats.submitted = sessions.filter(s => s.note_submitted).length;
+          stats.flagged = sessions.filter(s => s.is_duplicate).length;
+          
+          // Get recent sessions (first 10)
+          recentSessions = sessions.slice(0, 10);
+        }
+
+        // Fetch import history from backend API
+        const importsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/imports/history`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (importsResponse.ok) {
+          recentImports = await importsResponse.json();
+        }
+      } catch (error) {
+        console.error('Error loading dashboard data:', error);
       }
-
-      // Fetch flagged count from import staging
-      const { count: flaggedCount } = await supabase
-        .from('import_staging')
-        .select('*', { count: 'exact', head: true });
-
-      stats.flagged = flaggedCount ?? 0;
-
-      // Fetch recent sessions with client/provider names
-      const { data: recent } = await supabase
-        .from('sessions')
-        .select(`
-          id,
-          session_date,
-          note_submitted,
-          clients(name),
-          providers(name)
-        `)
-        .order('imported_at', { ascending: false })
-        .limit(10);
-
-      recentSessions = (recent as unknown as Session[]) ?? [];
-
-      // Fetch recent import runs
-      const { data: imports } = await supabase
-        .from('import_runs')
-        .select('id, source, file_name, started_at, total_rows, inserted_rows, flagged_rows')
-        .order('started_at', { ascending: false })
-        .limit(5);
-
-      recentImports = (imports as ImportRun[]) ?? [];
 
       loading = false;
     })();
