@@ -12,9 +12,9 @@
   let loading = $state(true);
 
   onMount(async () => {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { session } } = await supabase.auth.getSession();
 
-    if (!user) {
+    if (!session?.user) {
       goto('/login');
       return;
     }
