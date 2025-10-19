@@ -1,6 +1,7 @@
 <script lang="ts">
   import { supabase } from '$lib/supabaseClient';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
+  import BillingStatusBadge from '$lib/components/BillingStatusBadge.svelte';
   import { env } from '$env/dynamic/public';
 
   type Session = {
@@ -10,6 +11,11 @@
     provider_id: string;
     minutes: number | null;
     note_submitted: boolean;
+    billing_status?: string;
+    amount_billed?: number;
+    amount_paid?: number;
+    date_submitted?: string;
+    date_paid?: string;
     clients?: { name: string };
     providers?: { name: string };
   };
@@ -17,7 +23,7 @@
   let rows = $state<Session[]>([]);
   let q = $state('');
   let loading = $state(true);
-  let statusFilter = $state<'all' | 'pending' | 'submitted'>('all');
+  let statusFilter = $state<'all' | 'pending' | 'submitted' | 'billing'>('all');
 
   $effect(() => {
     (async () => {
@@ -50,9 +56,12 @@
 
     // Apply status filter
     if (statusFilter !== 'all') {
-      result = result.filter(r =>
-        statusFilter === 'pending' ? !r.note_submitted : r.note_submitted
-      );
+      result = result.filter(r => {
+        if (statusFilter === 'pending') return !r.note_submitted;
+        if (statusFilter === 'submitted') return r.note_submitted;
+        if (statusFilter === 'billing') return r.billing_status && r.billing_status !== 'completed';
+        return true;
+      });
     }
 
     // Apply search
@@ -170,6 +179,12 @@
       >
         Submitted
       </button>
+      <button
+        class="rounded-lg px-4 py-2 text-sm font-semibold transition-all {statusFilter === 'billing' ? 'bg-purple-600 text-white' : 'bg-slate-100 text-slate-700 hover:bg-slate-200'}"
+        onclick={() => statusFilter = 'billing'}
+      >
+        Billing
+      </button>
     </div>
   </div>
 
@@ -199,7 +214,9 @@
               <th class="p-4 text-left font-semibold">Client</th>
               <th class="p-4 text-left font-semibold">Provider</th>
               <th class="p-4 text-left font-semibold">Duration</th>
-              <th class="p-4 text-center font-semibold">Status</th>
+              <th class="p-4 text-center font-semibold">Note Status</th>
+              <th class="p-4 text-center font-semibold">Billing Status</th>
+              <th class="p-4 text-right font-semibold">Amount</th>
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
@@ -222,6 +239,18 @@
                 </td>
                 <td class="p-4 text-center">
                   <StatusBadge status={r.note_submitted ? 'submitted' : 'pending'} />
+                </td>
+                <td class="p-4 text-center">
+                  <BillingStatusBadge status={r.billing_status || 'completed'} size="sm" />
+                </td>
+                <td class="p-4 text-right text-slate-600">
+                  {#if r.amount_paid}
+                    <span class="text-emerald-600 font-semibold">${r.amount_paid.toFixed(2)}</span>
+                  {:else if r.amount_billed}
+                    <span class="text-amber-600">${r.amount_billed.toFixed(2)}</span>
+                  {:else}
+                    <span class="text-slate-400">-</span>
+                  {/if}
                 </td>
               </tr>
             {/each}
