@@ -341,6 +341,39 @@ SET billing_route = EXCLUDED.billing_route,
 
 ---
 
+## 💳 BILLING ROUTES REFERENCE
+
+### Active Insurance Payers
+| Payer | Billing Route | Portal / Notes |
+| --- | --- | --- |
+| Aetna | portal | Submit via Availity portal; include auth number when required |
+| AmeriHealth | portal | Use AmeriHealth web portal for claims |
+| Magellan | portal | Magellan provider portal |
+| Medicaid | simplepractice | File directly in SimplePractice unless otherwise noted |
+| Medicare | simplepractice | Bill through SimplePractice |
+| Oscar Health Insurance | portal | Oscar provider portal |
+| Tricare | portal | Tricare portal submission |
+
+### Managing Payers
+**Adding/Updating Payers:**
+```sql
+INSERT INTO public.payers (name, billing_route, status)
+VALUES ('PAYER_NAME', 'portal_or_simplepractice', 'Active')
+ON CONFLICT (name) DO UPDATE 
+SET billing_route = EXCLUDED.billing_route, 
+    status = EXCLUDED.status, 
+    updated_at = NOW();
+```
+
+**Quick Check:**
+```sql
+SELECT name, billing_route, status, updated_at
+FROM public.payers
+ORDER BY name;
+```
+
+---
+
 ## 🎨 UI COMPONENTS & PAGES
 
 ### Implemented Pages

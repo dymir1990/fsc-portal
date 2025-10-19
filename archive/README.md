@@ -20,6 +20,9 @@ This directory contains files that have been consolidated into the main project 
 - `MACKENZI_VALIDATION_GUIDE.md` → Merged into master doc
 - `FIXES_APPLIED.md` → Merged into master doc
 - `UI_REVIEW.md` → Merged into master doc
+- `billing-routes.md` → Merged into master doc billing routes section
+- `ui-overview.md` → Merged into master doc UI components section
+- `ui-overview.svg` → Archived (visual reference)
 
 ### Why Archived
 These files contained overlapping information that was creating confusion and maintenance overhead. All essential information has been consolidated into:
