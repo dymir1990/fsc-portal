@@ -10,6 +10,7 @@
   let userRole = $state<string>('admin');
   let pageTitle = $state<string>('Dashboard');
   let loading = $state(true);
+  let cacheBust = $state(Date.now()); // Force cache refresh
 
   onMount(async () => {
     const { data: { session } } = await supabase.auth.getSession();
