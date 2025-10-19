@@ -11,6 +11,7 @@
   let pageTitle = $state<string>('Dashboard');
   let loading = $state(true);
   let cacheBust = $state(Date.now()); // Force cache refresh
+  let isMobileMenuOpen = $state(false);
 
   onMount(async () => {
     console.log('Layout onMount starting, env:', env);
@@ -74,13 +75,21 @@
   </div>
 {:else}
   <div class="flex h-screen overflow-hidden bg-slate-50">
+    <!-- Mobile Overlay -->
+    {#if isMobileMenuOpen}
+      <div
+        class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+        onclick={() => isMobileMenuOpen = false}
+      ></div>
+    {/if}
+
     <!-- Sidebar -->
-    <Sidebar {userRole} />
+    <Sidebar {userRole} {isMobileMenuOpen} />
 
     <!-- Main Content Area -->
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Topbar -->
-      <Topbar title={pageTitle} />
+      <Topbar title={pageTitle} {isMobileMenuOpen} />
 
       <!-- Page Content -->
       <main class="flex-1 overflow-y-auto p-6">

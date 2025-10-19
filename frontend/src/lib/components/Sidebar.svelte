@@ -9,7 +9,7 @@
     roles: string[];
   };
 
-  let { userRole = 'admin' } = $props<{ userRole?: string }>();
+  let { userRole = 'admin', isMobileMenuOpen = false } = $props<{ userRole?: string; isMobileMenuOpen?: boolean }>();
 
   const allNavItems: NavItem[] = [
     {
@@ -82,6 +82,13 @@
     return $page.url.pathname === href || $page.url.pathname.startsWith(href + '/');
   };
 
+  const handleNavClick = () => {
+    // Close mobile menu when navigating
+    if (typeof window !== 'undefined' && window.innerWidth < 1024) {
+      isMobileMenuOpen = false;
+    }
+  };
+
   const getIcon = (iconName: string) => {
     const icons: Record<string, string> = {
       home: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6',
@@ -104,11 +111,11 @@
   }
 </script>
 
-<aside class="flex h-screen w-64 flex-col border-r border-slate-200 bg-white">
+<aside class="flex h-screen w-64 flex-col border-r border-slate-200 bg-white lg:translate-x-0 {isMobileMenuOpen ? 'translate-x-0' : '-translate-x-full'} fixed inset-y-0 left-0 z-50 lg:static lg:inset-auto transition-transform duration-300 ease-in-out">
   <!-- Logo -->
   <div class="flex h-16 items-center gap-3 border-b border-slate-200 px-6">
-    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-gradient-to-br from-blue-500 via-violet-500 to-pink-500 shadow-lg">
-      <span class="text-xl">⭐</span>
+    <div class="flex h-10 w-10 items-center justify-center rounded-xl bg-white shadow-lg overflow-hidden">
+      <img src="/400PngdpiLogo.png" alt="FSC Logo" class="h-8 w-8 object-contain" />
     </div>
     <div>
       <div class="text-sm font-bold text-fsc-navy-900">FSC Portal</div>
@@ -121,6 +128,7 @@
     {#each navItems as item}
       <a
         href={item.href}
+        onclick={handleNavClick}
         class="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-all {isActive(item.href)
           ? 'bg-gradient-to-r from-blue-50 to-purple-50 text-blue-700 shadow-sm'
           : 'text-slate-700 hover:bg-slate-50'}"

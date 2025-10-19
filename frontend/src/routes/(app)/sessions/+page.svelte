@@ -24,6 +24,10 @@
   let q = $state('');
   let loading = $state(true);
   let statusFilter = $state<'all' | 'pending' | 'submitted' | 'billing'>('all');
+  
+  // Pagination state
+  let currentPage = $state(1);
+  let itemsPerPage = $state(25);
 
   $effect(() => {
     (async () => {
@@ -77,6 +81,27 @@
 
     return result;
   };
+
+  // Pagination calculations
+  const totalItems = $derived(filtered().length);
+  const totalPages = $derived(Math.ceil(totalItems / itemsPerPage));
+  const startIndex = $derived((currentPage - 1) * itemsPerPage);
+  const endIndex = $derived(Math.min(startIndex + itemsPerPage, totalItems));
+  const paginatedData = $derived(filtered().slice(startIndex, endIndex));
+
+  // Reset to page 1 when filters change
+  $effect(() => {
+    currentPage = 1;
+  }, [q, statusFilter]);
+
+  const goToPage = (page: number) => {
+    if (page >= 1 && page <= totalPages) {
+      currentPage = page;
+    }
+  };
+
+  const goToPrevious = () => goToPage(currentPage - 1);
+  const goToNext = () => goToPage(currentPage + 1);
 
   const formatDate = (dateStr: string) => {
     const date = new Date(dateStr);
@@ -195,7 +220,7 @@
         <div class="spinner mb-4 h-8 w-8 border-4"></div>
         <p class="text-slate-600">Loading sessions...</p>
       </div>
-    {:else if filtered().length === 0}
+    {:else if totalItems === 0}
       <div class="flex flex-col items-center justify-center py-16 text-center">
         <div class="mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-slate-100">
           <svg class="h-8 w-8 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -220,7 +245,7 @@
             </tr>
           </thead>
           <tbody class="divide-y divide-slate-100">
-            {#each filtered() as r}
+            {#each paginatedData as r}
               <tr class="transition-colors hover:bg-slate-50">
                 <td class="p-4 text-slate-600">{formatDate(r.session_date)}</td>
                 <td class="p-4 font-medium text-slate-900">{r.clients?.name ?? 'Unknown'}</td>
@@ -260,10 +285,80 @@
     {/if}
   </div>
 
-  {#if filtered().length > 0}
-    <div class="flex items-center justify-between text-sm text-slate-600">
-      <p>Showing {filtered().length} of {rows.length} sessions</p>
-      <p class="text-xs text-slate-500">Limited to 50 most recent</p>
+  <!-- Pagination Controls -->
+  {#if totalItems > 0}
+    <div class="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+      <!-- Results Summary -->
+      <div class="text-sm text-slate-600">
+        <p>Showing {startIndex + 1}-{endIndex} of {totalItems} sessions</p>
+        {#if totalItems !== rows.length}
+          <p class="text-xs text-slate-500">Filtered from {rows.length} total sessions</p>
+        {/if}
+      </div>
+
+      <!-- Pagination Controls -->
+      {#if totalPages > 1}
+        <div class="flex items-center gap-2">
+          <!-- Items per page selector -->
+          <div class="flex items-center gap-2 text-sm text-slate-600">
+            <span>Show:</span>
+            <select
+              bind:value={itemsPerPage}
+              class="rounded-lg border border-slate-200 bg-white px-2 py-1 text-sm focus:border-blue-500 focus:outline-none"
+            >
+              <option value={10}>10</option>
+              <option value={25}>25</option>
+              <option value={50}>50</option>
+              <option value={100}>100</option>
+            </select>
+            <span>per page</span>
+          </div>
+
+          <!-- Page navigation -->
+          <div class="flex items-center gap-1">
+            <!-- Previous button -->
+            <button
+              onclick={goToPrevious}
+              disabled={currentPage === 1}
+              class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed {currentPage === 1 ? 'text-slate-400' : 'text-slate-700 hover:bg-slate-100'}"
+            >
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7" />
+              </svg>
+              Previous
+            </button>
+
+            <!-- Page numbers -->
+            <div class="flex items-center gap-1">
+              {#each Array.from({ length: Math.min(5, totalPages) }, (_, i) => {
+                const start = Math.max(1, currentPage - 2);
+                const end = Math.min(totalPages, start + 4);
+                const adjustedStart = Math.max(1, end - 4);
+                return adjustedStart + i;
+              }).filter(page => page <= totalPages) as page}
+                <button
+                  onclick={() => goToPage(page)}
+                  class="rounded-lg px-3 py-2 text-sm font-medium transition-colors {page === currentPage ? 'bg-blue-600 text-white' : 'text-slate-700 hover:bg-slate-100'}"
+                >
+                  {page}
+                </button>
+              {/each}
+            </div>
+
+            <!-- Next button -->
+            <button
+              onclick={goToNext}
+              disabled={currentPage === totalPages}
+              class="flex items-center gap-1 rounded-lg px-3 py-2 text-sm font-medium transition-colors disabled:opacity-50 disabled:cursor-not-allowed {currentPage === totalPages ? 'text-slate-400' : 'text-slate-700 hover:bg-slate-100'}"
+            >
+              Next
+              <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          </div>
+        </div>
+      {/if}
     </div>
   {/if}
 </div>
