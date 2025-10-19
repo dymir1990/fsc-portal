@@ -13,15 +13,19 @@
   let cacheBust = $state(Date.now()); // Force cache refresh
 
   onMount(async () => {
+    console.log('Layout onMount starting, env:', env);
     const { data: { session } } = await supabase.auth.getSession();
+    console.log('Session data:', session);
 
     if (!session?.user) {
+      console.log('No session, redirecting to login');
       goto('/login');
       return;
     }
 
     // Fetch actual role from backend API
     try {
+      console.log('Fetching user profile, API base:', env.PUBLIC_API_BASE);
       const response = await fetch(`${env.PUBLIC_API_BASE}/api/user/profile`, {
         headers: {
           'Authorization': `Bearer ${session.access_token}`
