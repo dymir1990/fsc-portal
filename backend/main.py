@@ -88,7 +88,7 @@ def get_import_history(current_user = Depends(require_user)):
 def get_sessions(current_user = Depends(require_user)):
     """Get all sessions with client and provider details."""
     _ = current_user  # auth check
-    sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,minutes,note_submitted,is_duplicate,clients(name),providers(name)").order("session_date", desc=True).limit(100).execute()
+    sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,minutes,note_submitted,is_duplicate,billing_status,amount_billed,amount_paid,date_submitted,date_paid,clients(name),providers(name)").order("session_date", desc=True).limit(100).execute()
     return sessions.data
 
 # --- helpers ---
@@ -235,6 +235,7 @@ async def import_simplepractice(file: UploadFile = File(...), current_user = Dep
                 "minutes": minutes,
                 "insurance_type": insurance,
                 "note_submitted": note_status in ("submitted","finalized","complete","completed"),
+                "billing_status": "completed",  # Default status for new imports
                 "external_source": "simplepractice",
                 "external_session_id": sp_id,
                 "imported_at": datetime.now(timezone.utc).isoformat(),
