@@ -4,6 +4,7 @@
   import { supabase } from '$lib/supabaseClient';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { env } from '$env/dynamic/public';
   import '../../app.css';
 
   let userRole = $state<string>('admin');
@@ -18,19 +19,24 @@
       return;
     }
 
-    // Fetch actual role from profiles table
-    const { data: profile, error } = await supabase
-      .from('profiles')
-      .select('role')
-      .eq('id', user.id)
-      .single();
+    // Fetch actual role from backend API
+    try {
+      const response = await fetch(`${env.PUBLIC_API_BASE}/api/user/profile`, {
+        headers: {
+          'Authorization': `Bearer ${session.access_token}`
+        }
+      });
 
-    if (error || !profile) {
+      if (response.ok) {
+        const profile = await response.json();
+        userRole = profile.role;
+      } else {
+        console.error('Failed to fetch user profile:', response.status);
+        userRole = 'billing'; // Fallback
+      }
+    } catch (error) {
       console.error('Failed to fetch user role:', error);
-      // Fallback to billing role if profile not found
-      userRole = 'billing';
-    } else {
-      userRole = profile.role;
+      userRole = 'billing'; // Fallback
     }
 
     loading = false;

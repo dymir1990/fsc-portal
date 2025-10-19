@@ -84,6 +84,13 @@ def get_import_history(current_user = Depends(require_user)):
     history = SB.table("import_runs").select("id,file_name,started_at,finished_at,total_rows,inserted_rows,updated_rows,flagged_rows").order("started_at", desc=True).limit(10).execute()
     return history.data
 
+@app.get("/api/user/profile")
+def get_user_profile(current_user = Depends(require_user)):
+    """Get current user's profile information."""
+    _ = current_user  # auth check
+    profile = SB.table("profiles").select("id,role").eq("id", current_user["id"]).single().execute()
+    return profile.data
+
 @app.get("/api/sessions")
 def get_sessions(current_user = Depends(require_user)):
     """Get all sessions with client and provider details."""
