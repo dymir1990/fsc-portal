@@ -9,6 +9,7 @@
     session_date: string;
     client_id: string;
     provider_id: string;
+    payer_uuid?: string | null;
     minutes: number | null;
     note_submitted: boolean;
     billing_status?: string;
@@ -18,6 +19,7 @@
     date_paid?: string;
     clients?: { name: string };
     providers?: { name: string };
+    payers?: { name: string } | null;
   };
 
   let rows = $state<Session[]>([]);
@@ -74,8 +76,9 @@
       result = result.filter(r => {
         const clientName = r.clients?.name ?? '';
         const providerName = r.providers?.name ?? '';
+        const payerName = r.payers?.name ?? '';
         const date = r.session_date ?? '';
-        return [clientName, providerName, date].join(' ').toLowerCase().includes(search);
+        return [clientName, providerName, payerName, date].join(' ').toLowerCase().includes(search);
       });
     }
 
@@ -180,7 +183,7 @@
       </div>
       <input
         class="w-full rounded-xl border-2 border-slate-200 bg-white py-3 pl-11 pr-4 text-slate-900 placeholder-slate-400 transition-all focus:border-blue-500 focus:outline-none focus:ring-4 focus:ring-blue-100"
-        placeholder="Search by client, provider, or date..."
+        placeholder="Search by client, provider, insurance, or date..."
         bind:value={q}
       />
     </div>
@@ -238,6 +241,7 @@
               <th class="p-4 text-left font-semibold">Date</th>
               <th class="p-4 text-left font-semibold">Client</th>
               <th class="p-4 text-left font-semibold">Provider</th>
+              <th class="p-4 text-left font-semibold">Insurance</th>
               <th class="p-4 text-left font-semibold">Duration</th>
               <th class="p-4 text-center font-semibold">Note Status</th>
               <th class="p-4 text-center font-semibold">Billing Status</th>
@@ -250,6 +254,18 @@
                 <td class="p-4 text-slate-600">{formatDate(r.session_date)}</td>
                 <td class="p-4 font-medium text-slate-900">{r.clients?.name ?? 'Unknown'}</td>
                 <td class="p-4 text-slate-700">{r.providers?.name ?? 'Unknown'}</td>
+                <td class="p-4 text-slate-700">
+                  {#if r.payers?.name}
+                    <span class="inline-flex items-center gap-1.5">
+                      <svg class="h-4 w-4 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
+                      </svg>
+                      {r.payers.name}
+                    </span>
+                  {:else}
+                    <span class="text-slate-400 text-sm">No Insurance</span>
+                  {/if}
+                </td>
                 <td class="p-4 text-slate-600">
                   {#if r.minutes}
                     <span class="inline-flex items-center gap-1">

@@ -93,9 +93,9 @@ def get_user_profile(current_user = Depends(require_user)):
 
 @app.get("/api/sessions")
 def get_sessions(current_user = Depends(require_user)):
-    """Get all sessions with client and provider details."""
+    """Get all sessions with client and provider details including insurance payer."""
     _ = current_user  # auth check
-    sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,minutes,note_submitted,is_duplicate,billing_status,amount_billed,amount_paid,date_submitted,date_paid,clients(name),providers(name)").order("session_date", desc=True).limit(100).execute()
+    sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,payer_uuid,minutes,note_submitted,is_duplicate,billing_status,amount_billed,amount_paid,date_submitted,date_paid,clients(name),providers(name),payers(name)").order("session_date", desc=True).limit(100).execute()
     return sessions.data
 
 # --- helpers ---
