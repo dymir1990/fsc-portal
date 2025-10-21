@@ -22,6 +22,15 @@
     flagged_rows: number;
   };
 
+  type DashboardMetrics = {
+    outstanding_claims: number;
+    collected_this_month: number;
+    ready_to_bill: number;
+    submitted_pending: number;
+    total_billed: number;
+    total_collected: number;
+  };
+
   let stats = $state({
     total: 0,
     pending: 0,
@@ -29,20 +38,44 @@
     flagged: 0
   });
 
+  let metrics = $state<DashboardMetrics>({
+    outstanding_claims: 0,
+    collected_this_month: 0,
+    ready_to_bill: 0,
+    submitted_pending: 0,
+    total_billed: 0,
+    total_collected: 0
+  });
+
   let recentSessions = $state<Session[]>([]);
   let recentImports = $state<ImportRun[]>([]);
   let loading = $state(true);
+  let metricsLoading = $state(true);
 
   $effect(() => {
     (async () => {
       loading = true;
+      metricsLoading = true;
 
       try {
         const { data: { session } } = await supabase.auth.getSession();
         if (!session?.access_token) {
           loading = false;
+          metricsLoading = false;
           return;
         }
+
+        // Fetch dashboard metrics from backend API
+        const metricsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/metrics/dashboard`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (metricsResponse.ok) {
+          metrics = await metricsResponse.json();
+        }
+        metricsLoading = false;
 
         // Fetch sessions from backend API
         const sessionsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/sessions`, {
@@ -57,7 +90,7 @@
           stats.pending = sessions.filter(s => !s.note_submitted).length;
           stats.submitted = sessions.filter(s => s.note_submitted).length;
           stats.flagged = sessions.filter(s => s.is_duplicate).length;
-          
+
           // Get recent sessions (first 10)
           recentSessions = sessions.slice(0, 10);
         }
@@ -86,6 +119,15 @@
     } catch {
       return dateStr;
     }
+  };
+
+  const formatCurrency = (amount: number) => {
+    return new Intl.NumberFormat('en-US', {
+      style: 'currency',
+      currency: 'USD',
+      minimumFractionDigits: 2,
+      maximumFractionDigits: 2
+    }).format(amount);
   };
 
   const formatStatus = (noteSubmitted: boolean) => noteSubmitted ? 'Submitted' : 'Pending';
@@ -117,33 +159,83 @@
       <p class="text-slate-600">Loading dashboard...</p>
     </div>
   {:else}
-    <!-- Stats Cards -->
+    <!-- Revenue Metrics Cards -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <StatCard
-        label="Total Sessions"
-        value={stats.total}
-        icon="📊"
-        color="blue"
-      />
-      <StatCard
-        label="Pending Notes"
-        value={stats.pending}
-        icon="⏳"
-        color="amber"
-        trend={{ value: '+12', positive: true }}
-      />
-      <StatCard
-        label="Submitted"
-        value={stats.submitted}
-        icon="✅"
-        color="emerald"
-      />
-      <StatCard
-        label="Flagged Issues"
-        value={stats.flagged}
-        icon="🚩"
-        color="red"
-      />
+      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-600">Outstanding Claims</p>
+            {#if metricsLoading}
+              <div class="mt-2 h-8 w-24 animate-pulse rounded bg-slate-200"></div>
+            {:else}
+              <p class="mt-2 text-3xl font-bold text-amber-600">{formatCurrency(metrics.outstanding_claims)}</p>
+            {/if}
+            <p class="mt-1 text-xs text-slate-500">Submitted, awaiting payment</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
+            <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-600">Collected This Month</p>
+            {#if metricsLoading}
+              <div class="mt-2 h-8 w-24 animate-pulse rounded bg-slate-200"></div>
+            {:else}
+              <p class="mt-2 text-3xl font-bold text-emerald-600">{formatCurrency(metrics.collected_this_month)}</p>
+            {/if}
+            <p class="mt-1 text-xs text-slate-500">Revenue received in {new Date().toLocaleString('en-US', { month: 'long' })}</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
+            <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-600">Ready to Bill</p>
+            {#if metricsLoading}
+              <div class="mt-2 h-8 w-16 animate-pulse rounded bg-slate-200"></div>
+            {:else}
+              <p class="mt-2 text-3xl font-bold text-blue-600">{metrics.ready_to_bill}</p>
+            {/if}
+            <p class="mt-1 text-xs text-slate-500">Sessions pending submission</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div class="flex-1">
+            <p class="text-sm font-medium text-slate-600">Submitted Pending</p>
+            {#if metricsLoading}
+              <div class="mt-2 h-8 w-16 animate-pulse rounded bg-slate-200"></div>
+            {:else}
+              <p class="mt-2 text-3xl font-bold text-purple-600">{metrics.submitted_pending}</p>
+            {/if}
+            <p class="mt-1 text-xs text-slate-500">Claims awaiting response</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100">
+            <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
 
     <!-- Quick Actions -->

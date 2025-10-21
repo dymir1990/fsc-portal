@@ -98,6 +98,69 @@ def get_sessions(current_user = Depends(require_user)):
     sessions = SB.table("sessions").select("id,session_date,client_id,provider_id,payer_uuid,minutes,note_submitted,is_duplicate,billing_status,amount_billed,amount_paid,date_submitted,date_paid,clients(name),providers(name),payers(name)").order("session_date", desc=True).limit(100).execute()
     return sessions.data
 
+@app.get("/api/metrics/dashboard")
+def get_dashboard_metrics(current_user = Depends(require_user)):
+    """Get dashboard metrics for revenue tracking and billing status."""
+    _ = current_user  # auth check
+
+    # Get all sessions for calculations
+    all_sessions = SB.table("sessions").select("billing_status,amount_billed,amount_paid,date_paid,date_submitted").execute().data
+
+    # Calculate metrics
+    outstanding_claims = sum(
+        float(s.get("amount_billed", 0) or 0)
+        for s in all_sessions
+        if s.get("billing_status") == "submitted" and not s.get("amount_paid")
+    )
+
+    # Collected this month (billing_status = 'paid' AND payment_date this month)
+    from datetime import datetime, timezone
+    now = datetime.now(timezone.utc)
+    current_month_start = now.replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+
+    collected_this_month = sum(
+        float(s.get("amount_paid", 0) or 0)
+        for s in all_sessions
+        if s.get("billing_status") == "paid"
+        and s.get("date_paid")
+        and datetime.fromisoformat(s["date_paid"].replace('Z', '+00:00')) >= current_month_start
+    )
+
+    # Ready to bill (billing_status = 'pending' or 'ready')
+    ready_to_bill = sum(
+        1 for s in all_sessions
+        if s.get("billing_status") in ("pending", "ready", "completed")
+    )
+
+    # Submitted pending (submitted but not paid)
+    submitted_pending = sum(
+        1 for s in all_sessions
+        if s.get("billing_status") == "submitted" and not s.get("amount_paid")
+    )
+
+    # Total billed amount
+    total_billed = sum(
+        float(s.get("amount_billed", 0) or 0)
+        for s in all_sessions
+        if s.get("amount_billed")
+    )
+
+    # Total collected (all time)
+    total_collected = sum(
+        float(s.get("amount_paid", 0) or 0)
+        for s in all_sessions
+        if s.get("amount_paid")
+    )
+
+    return {
+        "outstanding_claims": round(outstanding_claims, 2),
+        "collected_this_month": round(collected_this_month, 2),
+        "ready_to_bill": ready_to_bill,
+        "submitted_pending": submitted_pending,
+        "total_billed": round(total_billed, 2),
+        "total_collected": round(total_collected, 2)
+    }
+
 # --- helpers ---
 def find_provider(name: str | None):
     if not name: return None
