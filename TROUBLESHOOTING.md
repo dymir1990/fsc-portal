@@ -5,6 +5,43 @@
 
 ## 🔥 **Active Issues & Fixes**
 
+### **Issue #2: CSV Uploads But No Records Created** ✅ FIXED
+
+**Symptoms:**
+- CSV file can be selected and uploaded
+- File appears to upload
+- No error message shown
+- **No records appear in Sessions page**
+- Console shows "PUBLIC_API_BASE is not set" warning
+
+**Root Cause:**
+The `PUBLIC_API_BASE` environment variable was not configured in Vercel, causing the frontend to be unable to reach the backend API. This resulted in failed API calls that weren't properly reported to the user.
+
+**Fix Applied:** ✅ **Oct 21, 2025**
+1. Added default API base URL (`https://api.fscnj.com`) as fallback
+2. Added console logging to help debug API connection issues
+3. Created `.env.example` file to document required environment variables
+4. Improved error messages when uploads fail
+
+**Code Changes:**
+- Updated `/frontend/src/lib/api.ts` with default value
+- Added logging to `/frontend/src/routes/(app)/case-manager/import/+page.svelte`
+- Created `/frontend/.env.example`
+
+**How to Verify Fix:**
+1. Check browser console (F12) when uploading
+2. Should see "Uploading to: https://api.fscnj.com/api/imports/simplepractice"
+3. Should see response status (200 for success)
+4. Records should appear in Sessions page after upload
+
+**For Deployment:**
+Set the following environment variable in Vercel:
+```
+PUBLIC_API_BASE=https://api.fscnj.com
+```
+
+---
+
 ### **Issue #1: CSV Upload Shows 0 Imported, All Flagged** ✅ FIXED
 
 **Symptoms:**

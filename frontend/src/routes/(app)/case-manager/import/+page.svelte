@@ -62,21 +62,29 @@
     result = null;
 
     try {
-      const res = await fetch(api('/api/imports/simplepractice'), {
+      const apiUrl = api('/api/imports/simplepractice');
+      console.log('Uploading to:', apiUrl);
+
+      const res = await fetch(apiUrl, {
         method: 'POST',
         headers: { Authorization: `Bearer ${token}` },
         body
       });
 
+      console.log('Response status:', res.status);
+
       if (!res.ok) {
         const detail = await res.text();
+        console.error('Upload error:', detail);
         throw new Error(detail || res.statusText);
       }
 
       const data = await res.json();
+      console.log('Upload result:', data);
       result = data as ImportResult;
       msg = `Success! Imported ${data.inserted} sessions, updated ${data.updated}, flagged ${data.flagged}.`;
     } catch (err) {
+      console.error('Upload exception:', err);
       const message = err instanceof Error ? err.message : 'Upload failed.';
       msg = `Error: ${message}`;
     } finally {
