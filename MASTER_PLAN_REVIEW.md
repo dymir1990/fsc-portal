@@ -327,3 +327,34 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ---
 
 **The FSC Portal is production-ready and awaiting final user validation before full deployment!** 🚀
+
+---
+
+## 🔧 **LIVE TESTING UPDATE - Oct 21, 2025**
+
+### **Issue Found During Mackenzi Testing:**
+- ✅ Login worked perfectly
+- ✅ CSV upload accepted file
+- ❌ **0 sessions imported, 19 flagged** - Providers/clients didn't exist
+
+### **Root Cause:**
+The CSV import required providers and clients to already exist in the database. When they didn't exist, sessions were flagged instead of imported.
+
+### **Fix Applied (Deployed):**
+✅ **Auto-create providers and clients during import**
+- Added `find_or_create_provider()` function
+- Added `find_or_create_client()` function
+- CSV import now automatically creates missing entries
+- No more flagged rows for missing providers/clients
+
+### **Re-Test Instructions for Mackenzi:**
+1. **Wait 5 minutes** for deployment to complete
+2. **Re-upload the same CSV file** at `https://app.fscnj.com`
+3. **Expected Result:** 19 sessions imported, 0 flagged
+4. **Verify:** Sessions page shows all 19 sessions with correct names
+
+### **Deployment:**
+- **Committed:** Oct 21, 2025
+- **Deployed to:** Render (auto-deploy)
+- **Status:** Live in ~5 minutes
+- **Git Commit:** `9e45582` - "fix: auto-create providers and clients during CSV import"
