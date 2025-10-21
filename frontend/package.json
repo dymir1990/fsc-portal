@@ -13,8 +13,7 @@
     "preview": "vite preview",
     "check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
     "lint": "eslint .",
-    "format": "prettier -w .",
-    "postinstall": "svelte-kit sync"
+    "format": "prettier -w ."
   },
   "engines": {
     "node": ">=18.17"
