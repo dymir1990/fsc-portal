@@ -9,7 +9,11 @@
     roles: string[];
   };
 
-  let { userRole = 'admin', isMobileMenuOpen = false } = $props<{ userRole?: string; isMobileMenuOpen?: boolean }>();
+  let { userRole = 'admin', isMobileMenuOpen = false, toggleMobileMenu } = $props<{
+    userRole?: string;
+    isMobileMenuOpen?: boolean;
+    toggleMobileMenu: () => void;
+  }>();
 
   const allNavItems: NavItem[] = [
     {
@@ -85,7 +89,7 @@
   const handleNavClick = () => {
     // Close mobile menu when navigating
     if (typeof window !== 'undefined' && window.innerWidth < 1024) {
-      isMobileMenuOpen = false;
+      toggleMobileMenu();
     }
   };
 

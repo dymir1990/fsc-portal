@@ -2,7 +2,10 @@
   import { supabase } from '$lib/supabaseClient';
   import { onMount } from 'svelte';
 
-  let { title = 'Dashboard', isMobileMenuOpen = false } = $props<{ title?: string; isMobileMenuOpen?: boolean }>();
+  let { title = 'Dashboard', toggleMobileMenu } = $props<{
+    title?: string;
+    toggleMobileMenu: () => void;
+  }>();
 
   let user = $state<any>(null);
   let showUserMenu = $state(false);
@@ -27,9 +30,10 @@
   <div class="flex items-center gap-4">
     <!-- Mobile Menu Button -->
     <button
-      onclick={() => isMobileMenuOpen = !isMobileMenuOpen}
+      onclick={toggleMobileMenu}
       class="lg:hidden rounded-lg p-2 text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-      title="Toggle Menu"
+      aria-label="Toggle navigation menu"
+      type="button"
     >
       <svg class="h-6 w-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />

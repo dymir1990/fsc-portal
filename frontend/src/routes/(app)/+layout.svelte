@@ -4,6 +4,7 @@
   import { supabase } from '$lib/supabaseClient';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
+  import { page } from '$app/stores';
   import { env } from '$env/dynamic/public';
   import '../../app.css';
 
@@ -12,6 +13,35 @@
   let loading = $state(true);
   let cacheBust = $state(Date.now()); // Force cache refresh
   let isMobileMenuOpen = $state(false);
+
+  // Close mobile menu when route changes
+  $effect(() => {
+    if ($page.url.pathname) {
+      isMobileMenuOpen = false;
+    }
+  });
+
+  // Lock body scroll when mobile menu is open
+  $effect(() => {
+    if (typeof window !== 'undefined') {
+      if (isMobileMenuOpen) {
+        document.body.style.overflow = 'hidden';
+      } else {
+        document.body.style.overflow = '';
+      }
+    }
+  });
+
+  // Handle keyboard events (Escape key closes menu)
+  function handleKeydown(event: KeyboardEvent) {
+    if (event.key === 'Escape' && isMobileMenuOpen) {
+      isMobileMenuOpen = false;
+    }
+  }
+
+  const toggleMobileMenu = () => {
+    isMobileMenuOpen = !isMobileMenuOpen;
+  };
 
   onMount(async () => {
     console.log('Layout onMount starting, env:', env);
@@ -66,6 +96,8 @@
   });
 </script>
 
+<svelte:window onkeydown={handleKeydown} />
+
 {#if loading}
   <div class="flex min-h-screen items-center justify-center bg-slate-50">
     <div class="text-center space-y-4">
@@ -78,18 +110,21 @@
     <!-- Mobile Overlay -->
     {#if isMobileMenuOpen}
       <div
-        class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden"
+        class="fixed inset-0 z-40 bg-black bg-opacity-50 lg:hidden transition-opacity duration-300"
         onclick={() => isMobileMenuOpen = false}
+        role="button"
+        tabindex="-1"
+        aria-label="Close menu"
       ></div>
     {/if}
 
     <!-- Sidebar -->
-    <Sidebar {userRole} {isMobileMenuOpen} />
+    <Sidebar {userRole} {isMobileMenuOpen} {toggleMobileMenu} />
 
     <!-- Main Content Area -->
     <div class="flex flex-1 flex-col overflow-hidden">
       <!-- Topbar -->
-      <Topbar title={pageTitle} {isMobileMenuOpen} />
+      <Topbar title={pageTitle} {toggleMobileMenu} />
 
       <!-- Page Content -->
       <main class="flex-1 overflow-y-auto p-6">
