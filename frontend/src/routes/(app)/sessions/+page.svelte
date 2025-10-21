@@ -91,8 +91,11 @@
 
   // Reset to page 1 when filters change
   $effect(() => {
+    // Track dependencies
+    q;
+    statusFilter;
     currentPage = 1;
-  }, [q, statusFilter]);
+  });
 
   const goToPage = (page: number) => {
     if (page >= 1 && page <= totalPages) {
