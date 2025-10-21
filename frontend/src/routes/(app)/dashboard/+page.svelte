@@ -2,6 +2,7 @@
   import { supabase } from '$lib/supabaseClient';
   import StatCard from '$lib/components/StatCard.svelte';
   import StatusBadge from '$lib/components/StatusBadge.svelte';
+  import RevenueChart from '$lib/components/RevenueChart.svelte';
   import { env } from '$env/dynamic/public';
 
   type Session = {
@@ -22,13 +23,43 @@
     flagged_rows: number;
   };
 
-  let stats = $state({
-    total: 0,
-    pending: 0,
-    submitted: 0,
-    flagged: 0
+  type DashboardMetrics = {
+    total_sessions: number;
+    completed_sessions: number;
+    ready_to_bill: number;
+    submitted_claims: number;
+    paid_sessions: number;
+    denied_claims: number;
+    total_billed: number;
+    total_paid: number;
+    outstanding_amount: number;
+    month_collected: number;
+    avg_days_to_payment: number;
+  };
+
+  type TrendData = {
+    month: string;
+    month_key: string;
+    sessions: number;
+    billed: number;
+    collected: number;
+  };
+
+  let metrics = $state<DashboardMetrics>({
+    total_sessions: 0,
+    completed_sessions: 0,
+    ready_to_bill: 0,
+    submitted_claims: 0,
+    paid_sessions: 0,
+    denied_claims: 0,
+    total_billed: 0,
+    total_paid: 0,
+    outstanding_amount: 0,
+    month_collected: 0,
+    avg_days_to_payment: 0
   });
 
+  let revenueTrends = $state<TrendData[]>([]);
   let recentSessions = $state<Session[]>([]);
   let recentImports = $state<ImportRun[]>([]);
   let loading = $state(true);
@@ -44,7 +75,30 @@
           return;
         }
 
-        // Fetch sessions from backend API
+        // Fetch dashboard metrics from backend API
+        const metricsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/metrics/dashboard`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (metricsResponse.ok) {
+          metrics = await metricsResponse.json();
+        }
+
+        // Fetch revenue trends
+        const trendsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/metrics/revenue-trends`, {
+          headers: {
+            'Authorization': `Bearer ${session.access_token}`
+          }
+        });
+
+        if (trendsResponse.ok) {
+          const trendsData = await trendsResponse.json();
+          revenueTrends = trendsData.trends || [];
+        }
+
+        // Fetch sessions from backend API for recent sessions display
         const sessionsResponse = await fetch(`${env.PUBLIC_API_BASE}/api/sessions`, {
           headers: {
             'Authorization': `Bearer ${session.access_token}`
@@ -53,11 +107,6 @@
 
         if (sessionsResponse.ok) {
           const sessions = await sessionsResponse.json();
-          stats.total = sessions.length;
-          stats.pending = sessions.filter(s => !s.note_submitted).length;
-          stats.submitted = sessions.filter(s => s.note_submitted).length;
-          stats.flagged = sessions.filter(s => s.is_duplicate).length;
-          
           // Get recent sessions (first 10)
           recentSessions = sessions.slice(0, 10);
         }
@@ -117,34 +166,71 @@
       <p class="text-slate-600">Loading dashboard...</p>
     </div>
   {:else}
-    <!-- Stats Cards -->
+    <!-- Revenue Metrics -->
     <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
-      <StatCard
-        label="Total Sessions"
-        value={stats.total}
-        icon="📊"
-        color="blue"
-      />
-      <StatCard
-        label="Pending Notes"
-        value={stats.pending}
-        icon="⏳"
-        color="amber"
-        trend={{ value: '+12', positive: true }}
-      />
-      <StatCard
-        label="Submitted"
-        value={stats.submitted}
-        icon="✅"
-        color="emerald"
-      />
-      <StatCard
-        label="Flagged Issues"
-        value={stats.flagged}
-        icon="🚩"
-        color="red"
-      />
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Outstanding Claims</p>
+            <p class="mt-2 text-3xl font-bold text-amber-600">${metrics.outstanding_amount.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <p class="mt-1 text-xs text-slate-500">{metrics.submitted_claims} claims submitted</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-amber-100">
+            <svg class="h-6 w-6 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Collected This Month</p>
+            <p class="mt-2 text-3xl font-bold text-emerald-600">${metrics.month_collected.toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2})}</p>
+            <p class="mt-1 text-xs text-slate-500">{metrics.paid_sessions} payments received</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-emerald-100">
+            <svg class="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Ready to Bill</p>
+            <p class="mt-2 text-3xl font-bold text-blue-600">{metrics.ready_to_bill}</p>
+            <p class="mt-1 text-xs text-slate-500">{metrics.total_sessions} total sessions</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-100">
+            <svg class="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
+            </svg>
+          </div>
+        </div>
+      </div>
+
+      <div class="rounded-2xl border border-slate-200 bg-white p-6 shadow-sm">
+        <div class="flex items-center justify-between">
+          <div>
+            <p class="text-sm font-medium text-slate-600">Avg. Days to Payment</p>
+            <p class="mt-2 text-3xl font-bold text-purple-600">{metrics.avg_days_to_payment}</p>
+            <p class="mt-1 text-xs text-slate-500">{metrics.denied_claims} claims denied</p>
+          </div>
+          <div class="flex h-12 w-12 items-center justify-center rounded-xl bg-purple-100">
+            <svg class="h-6 w-6 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+            </svg>
+          </div>
+        </div>
+      </div>
     </div>
+
+    <!-- Revenue Chart -->
+    <RevenueChart trends={revenueTrends} />
 
     <!-- Quick Actions -->
     <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
