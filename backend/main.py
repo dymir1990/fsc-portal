@@ -104,10 +104,32 @@ def find_provider(name: str | None):
     r = SB.table("providers").select("id").ilike("name", name).limit(1).execute().data
     return r[0] if r else None
 
+def find_or_create_provider(name: str | None):
+    """Find provider or create if doesn't exist."""
+    if not name: return None
+    # Try to find existing
+    r = SB.table("providers").select("id").ilike("name", name).limit(1).execute().data
+    if r:
+        return r[0]
+    # Create new provider
+    new_provider = SB.table("providers").insert({"name": name.strip()}).execute().data
+    return new_provider[0] if new_provider else None
+
 def find_client(name: str | None):
     if not name: return None
     r = SB.table("clients").select("id").ilike("name", name).limit(1).execute().data
     return r[0] if r else None
+
+def find_or_create_client(name: str | None):
+    """Find client or create if doesn't exist."""
+    if not name: return None
+    # Try to find existing
+    r = SB.table("clients").select("id").ilike("name", name).limit(1).execute().data
+    if r:
+        return r[0]
+    # Create new client
+    new_client = SB.table("clients").insert({"name": name.strip()}).execute().data
+    return new_client[0] if new_client else None
 
 def to_minutes(start_s: str | None, end_s: str | None) -> int | None:
     if not start_s or not end_s: return None
@@ -210,8 +232,9 @@ async def import_simplepractice(file: UploadFile = File(...), current_user = Dep
             primary_ins   = pick(row, COLS["primary_insurance"])
             billing_route = pick(row, COLS["billing_route"]) or "simplepractice"
 
-            prov = find_provider(provider_name)
-            cli  = find_client(client_name)
+            # Auto-create providers and clients if they don't exist
+            prov = find_or_create_provider(provider_name)
+            cli  = find_or_create_client(client_name)
 
             if not prov or not cli or not service_date:
                 reason = "missing_provider" if not prov else ("missing_client" if not cli else "missing_date")
