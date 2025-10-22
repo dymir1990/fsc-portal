@@ -184,17 +184,14 @@ def find_or_create_payer(insurance_string: str, billing_route: str = "simpleprac
     
     try:
         # Try to find existing payer by name (case-insensitive)
-        result = SB.table("payers").select("uuid").ilike("name", payer_name).limit(1).execute()
+        result = SB.table("payers").select("id").ilike("name", payer_name).limit(1).execute()
         if result.data:
             logger.info(f"✓ Found existing payer: {payer_name}")
-            return result.data[0]['uuid']
+            return result.data[0]['id']
         
-        # Create new payer
-        import uuid
-        new_uuid = str(uuid.uuid4())
+        # Create new payer (payers table uses 'id' not 'uuid')
         logger.info(f"Creating new payer: {payer_name} (payer_id: {payer_id})")
         new_payer = SB.table("payers").insert({
-            "uuid": new_uuid,
             "name": payer_name,
             "payer_id": payer_id,
             "billing_route": billing_route,
@@ -202,8 +199,8 @@ def find_or_create_payer(insurance_string: str, billing_route: str = "simpleprac
         }).execute()
         
         if new_payer.data:
-            logger.info(f"✓ Created new payer: {payer_name} (UUID: {new_uuid})")
-            return new_uuid
+            logger.info(f"✓ Created new payer: {payer_name} (ID: {new_payer.data[0]['id']})")
+            return new_payer.data[0]['id']
         else:
             logger.error(f"✗ Failed to create payer: {payer_name}")
             return None
@@ -398,12 +395,12 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     continue
                 
                 # Handle insurance/payer - auto-create if possible
-                payer_uuid = None
+                payer_id = None
                 if primary_insurance:
-                    payer_uuid = find_or_create_payer(primary_insurance, billing_route)
+                    payer_id = find_or_create_payer(primary_insurance, billing_route)
                     
                     # If payer creation STILL failed (rare), flag it
-                    if not payer_uuid:
+                    if not payer_id:
                         logger.error(f"Failed to create payer at row {row_num}: {primary_insurance}")
                         flagged += 1
                         if len(flagged_preview) < 10:
@@ -427,7 +424,7 @@ async def import_simplepractice(file: UploadFile = File(...)):
                             except Exception as e:
                                 logger.error(f"Could not save to staging: {e}")
                         continue
-                # If no insurance, leave payer_uuid as None (self-pay)
+                # If no insurance, leave payer_id as None (self-pay)
                 
                 # Determine note submission status
                 note_submitted = status.lower() in ["completed", "submitted", "finalized", "complete"]
@@ -449,9 +446,9 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     "imported_at": datetime.now(timezone.utc).isoformat()
                 }
                 
-                # Add payer UUID if available
-                if payer_uuid:
-                    session_data["payer_uuid"] = payer_uuid
+                # Add payer ID if available
+                if payer_id:
+                    session_data["payer_id"] = payer_id
                 
                 # Check if session already exists
                 existing = SB.table("sessions").select("id") \
