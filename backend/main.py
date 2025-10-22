@@ -183,15 +183,16 @@ def find_or_create_payer(insurance_string: str, billing_route: str = "simpleprac
     payer_name, payer_id = parse_insurance_info(insurance_string)
     
     try:
-        # Try to find existing payer by name
+        # Try to find existing payer by name (case-insensitive)
         result = SB.table("payers").select("uuid").ilike("name", payer_name).limit(1).execute()
         if result.data:
-            logger.info(f"Found existing payer: {payer_name}")
+            logger.info(f"✓ Found existing payer: {payer_name}")
             return result.data[0]['uuid']
         
         # Create new payer
         import uuid
         new_uuid = str(uuid.uuid4())
+        logger.info(f"Creating new payer: {payer_name} (payer_id: {payer_id})")
         new_payer = SB.table("payers").insert({
             "uuid": new_uuid,
             "name": payer_name,
@@ -201,10 +202,15 @@ def find_or_create_payer(insurance_string: str, billing_route: str = "simpleprac
         }).execute()
         
         if new_payer.data:
-            logger.info(f"Created new payer: {payer_name} (UUID: {new_uuid})")
+            logger.info(f"✓ Created new payer: {payer_name} (UUID: {new_uuid})")
             return new_uuid
+        else:
+            logger.error(f"✗ Failed to create payer: {payer_name}")
+            return None
     except Exception as e:
-        logger.error(f"Error with payer {payer_name}: {e}")
+        logger.error(f"✗ Error with payer {payer_name}: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
     
     return None
 
@@ -391,18 +397,18 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     flagged += 1
                     continue
                 
-                # Handle insurance/payer - FLAG if missing or unknown
+                # Handle insurance/payer - auto-create if possible
                 payer_uuid = None
                 if primary_insurance:
                     payer_uuid = find_or_create_payer(primary_insurance, billing_route)
                     
-                    # If payer lookup failed, FLAG for team review
+                    # If payer creation STILL failed (rare), flag it
                     if not payer_uuid:
-                        logger.warning(f"Unknown insurance at row {row_num}: {primary_insurance}")
+                        logger.error(f"Failed to create payer at row {row_num}: {primary_insurance}")
                         flagged += 1
                         if len(flagged_preview) < 10:
                             flagged_preview.append({
-                                "reason": "unknown_insurance",
+                                "reason": "payer_creation_failed",
                                 "client_name": client_name,
                                 "provider_name": provider_name,
                                 "service_date": formatted_date,
@@ -416,35 +422,12 @@ async def import_simplepractice(file: UploadFile = File(...)):
                                 SB.table("import_staging").insert({
                                     "run_id": run_id,
                                     "raw": row,
-                                    "reason": f"unknown_insurance: {primary_insurance}"
+                                    "reason": f"payer_creation_failed: {primary_insurance}"
                                 }).execute()
                             except Exception as e:
                                 logger.error(f"Could not save to staging: {e}")
                         continue
-                else:
-                    # No insurance provided - FLAG as potential self-pay
-                    logger.warning(f"No insurance at row {row_num}: {client_name} - {formatted_date}")
-                    flagged += 1
-                    if len(flagged_preview) < 10:
-                        flagged_preview.append({
-                            "reason": "missing_insurance_or_self_pay",
-                            "client_name": client_name,
-                            "provider_name": provider_name,
-                            "service_date": formatted_date,
-                            "row": row_num
-                        })
-                    
-                    # Store in staging for team review
-                    if SB:
-                        try:
-                            SB.table("import_staging").insert({
-                                "run_id": run_id,
-                                "raw": row,
-                                "reason": "missing_insurance_or_self_pay"
-                            }).execute()
-                        except Exception as e:
-                            logger.error(f"Could not save to staging: {e}")
-                    continue
+                # If no insurance, leave payer_uuid as None (self-pay)
                 
                 # Determine note submission status
                 note_submitted = status.lower() in ["completed", "submitted", "finalized", "complete"]
