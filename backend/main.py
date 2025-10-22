@@ -391,10 +391,60 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     flagged += 1
                     continue
                 
-                # Find or create payer (if insurance is provided)
+                # Handle insurance/payer - FLAG if missing or unknown
                 payer_uuid = None
                 if primary_insurance:
                     payer_uuid = find_or_create_payer(primary_insurance, billing_route)
+                    
+                    # If payer lookup failed, FLAG for team review
+                    if not payer_uuid:
+                        logger.warning(f"Unknown insurance at row {row_num}: {primary_insurance}")
+                        flagged += 1
+                        if len(flagged_preview) < 10:
+                            flagged_preview.append({
+                                "reason": "unknown_insurance",
+                                "client_name": client_name,
+                                "provider_name": provider_name,
+                                "service_date": formatted_date,
+                                "insurance": primary_insurance,
+                                "row": row_num
+                            })
+                        
+                        # Store in staging for team review
+                        if SB:
+                            try:
+                                SB.table("import_staging").insert({
+                                    "run_id": run_id,
+                                    "raw": row,
+                                    "reason": f"unknown_insurance: {primary_insurance}"
+                                }).execute()
+                            except Exception as e:
+                                logger.error(f"Could not save to staging: {e}")
+                        continue
+                else:
+                    # No insurance provided - FLAG as potential self-pay
+                    logger.warning(f"No insurance at row {row_num}: {client_name} - {formatted_date}")
+                    flagged += 1
+                    if len(flagged_preview) < 10:
+                        flagged_preview.append({
+                            "reason": "missing_insurance_or_self_pay",
+                            "client_name": client_name,
+                            "provider_name": provider_name,
+                            "service_date": formatted_date,
+                            "row": row_num
+                        })
+                    
+                    # Store in staging for team review
+                    if SB:
+                        try:
+                            SB.table("import_staging").insert({
+                                "run_id": run_id,
+                                "raw": row,
+                                "reason": "missing_insurance_or_self_pay"
+                            }).execute()
+                        except Exception as e:
+                            logger.error(f"Could not save to staging: {e}")
+                    continue
                 
                 # Determine note submission status
                 note_submitted = status.lower() in ["completed", "submitted", "finalized", "complete"]
