@@ -11,66 +11,31 @@
 
   let { userRole = 'admin', isMobileMenuOpen = false } = $props<{ userRole?: string; isMobileMenuOpen?: boolean }>();
 
+  // Nordic Clean Navigation - 4 Items Only
   const allNavItems: NavItem[] = [
     {
-      label: 'Dashboard',
-      href: '/dashboard',
-      icon: 'home',
+      label: 'Revenue',
+      href: '/billing/revenue',
+      icon: 'dollar',
       roles: ['admin', 'director', 'billing']
     },
     {
       label: 'Sessions',
       href: '/sessions',
       icon: 'clipboard',
-      roles: ['admin', 'director']
+      roles: ['admin', 'director', 'billing']
     },
     {
-      label: 'Import CSV',
-      href: '/case-manager/import',
-      icon: 'upload',
-      roles: ['admin', 'director']
-    },
-    {
-      label: 'Work Queue',
-      href: '/case-manager/queue',
-      icon: 'inbox',
-      roles: ['admin', 'director']
-    },
-    {
-      label: 'My Work',
-      href: '/billing/my-work',
-      icon: 'checklist',
-      roles: ['billing']
-    },
-    {
-      label: 'Billing',
-      href: '/billing',
-      icon: 'dollar',
-      roles: ['admin']
-    },
-    {
-      label: 'Reports',
-      href: '/reports',
-      icon: 'chart',
-      roles: ['admin', 'director']
-    },
-    {
-      label: 'Payers',
+      label: 'Insurance',
       href: '/settings/payers',
       icon: 'building',
-      roles: ['admin', 'director']
+      roles: ['admin', 'director', 'billing']
     },
     {
-      label: 'Payroll',
-      href: '/settings/payroll',
-      icon: 'wallet',
-      roles: ['admin']
-    },
-    {
-      label: 'Users',
-      href: '/settings/users',
-      icon: 'users',
-      roles: ['admin']
+      label: 'Settings',
+      href: '/settings',
+      icon: 'cog',
+      roles: ['admin', 'director', 'billing']
     }
   ];
 
@@ -100,7 +65,8 @@
       chart: 'M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z',
       building: 'M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4',
       wallet: 'M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z',
-      users: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z'
+      users: 'M12 4.354a4 4 0 110 5.292M15 21H3v-1a6 6 0 0112 0v1zm0 0h6v-1a6 6 0 00-9-5.197M13 7a4 4 0 11-8 0 4 4 0 018 0z',
+      cog: 'M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z M15 12a3 3 0 11-6 0 3 3 0 016 0z'
     };
     return icons[iconName] || icons.home;
   };
