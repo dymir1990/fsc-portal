@@ -49,14 +49,11 @@ WHERE table_name = 'sessions' AND column_name = 'payer_uuid';
 
 ### Part 1: Navigate to Import (15 seconds)
 
-**Primary Route** (if new UI is live):
-1. Go to `app.fscnj.com`
-2. Click "Revenue" in sidebar
-3. Click [Import CSV] button (top-right)
-
-**Backup Route** (if new UI isn't showing):
+**USE THIS ROUTE** (confirmed working):
 1. Go directly to: `app.fscnj.com/case-manager/import`
-2. Say: "Here's our dedicated import page for billing staff"
+2. Say: "Let me show you our import system for billing staff"
+
+**Note**: The default page is currently `/dashboard` (old UI). The new Revenue-first navigation is deployed but cached. Use the direct URL for the demo.
 
 ---
 
