@@ -9,7 +9,7 @@
     const { data: { session } } = await supabase.auth.getSession();
 
     if (session) {
-      goto('/dashboard');
+      goto('/billing/revenue');
     } else {
       goto('/login');
     }
