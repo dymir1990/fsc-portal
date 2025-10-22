@@ -418,3 +418,77 @@ The CSV import required providers and clients to already exist in the database. 
 2. 🧪 Test upload with `appointments_report-3.csv`
 3. ✅ Verify 24 sessions imported successfully
 4. 🎉 CSV import fully functional!
+
+---
+
+## 📝 **Today's Testing Guide (Oct 21, 2025)**
+
+### **Quick Testing Steps:**
+
+1. **Wait for Deployment** (~3 minutes)
+   - Check: https://dashboard.render.com/
+   - Wait for "Live" green status
+
+2. **Upload CSV File**
+   - Go to: https://app.fscnj.com/case-manager/import
+   - Upload: `/Users/dymirtatem/Downloads/appointments_report-3.csv`
+   - Click "Upload CSV"
+
+3. **Expected Results:**
+   ```
+   ✅ 24 Records Imported
+   ✅ 0 Flagged Rows
+   ```
+
+4. **Verify in Sessions Page**
+   - Go to: https://app.fscnj.com/case-manager/sessions
+   - Should see 24 new sessions
+   - Dates: October 6-10, 2025
+   - Providers: Edison Jaquez, Diamond Williams, Dymir Tatem, etc.
+
+### **If Something Goes Wrong:**
+
+**Check Render Logs:**
+1. Render Dashboard → Backend Service → Logs tab
+2. Look for "INFO:" or "ERROR:" lines
+3. Take screenshot
+
+**Check Supabase:**
+```sql
+-- Latest import status
+SELECT * FROM import_runs ORDER BY started_at DESC LIMIT 1;
+
+-- Check providers created
+SELECT * FROM providers WHERE created_at > NOW() - INTERVAL '10 minutes';
+
+-- Check sessions count
+SELECT COUNT(*) FROM sessions WHERE imported_at > NOW() - INTERVAL '10 minutes';
+```
+
+### **What Was Fixed Today:**
+
+**Problem:** Backend looked for wrong CSV column names (mock format vs actual SimplePractice)
+
+**Solution:** Updated parser to check both formats:
+- `Date of Service` (new) + `Date added` (old)
+- `Clinician` (new) + `Primary clinician` (old)
+- `Primary Insurance` (new) + `Primary insurance` (old)
+
+**Files Changed:**
+- `backend/main.py` - Updated CSV column mapping (lines 282-309)
+- `backend/sample_data/simplepractice_actual.csv` - Added real CSV sample
+
+**Deployment:**
+- Commit: `ce168e8`
+- Status: Deployed to Render
+- Confidence: 95% this fixes the issue
+
+### **Success Indicators:**
+
+✅ Import shows "24 Records Imported"  
+✅ No flagged rows  
+✅ New providers in database  
+✅ New sessions visible in Sessions page  
+✅ Correct dates and names  
+
+**System is production-ready after this test passes!** 🚀
