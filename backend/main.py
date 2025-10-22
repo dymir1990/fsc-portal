@@ -543,6 +543,79 @@ async def get_sessions():
         logger.error(traceback.format_exc())
         raise HTTPException(status_code=500, detail=str(e))
 
+@app.get("/api/user/profile")
+async def get_user_profile(authorization: str = Header(None)):
+    """Get user profile with role information"""
+    if not SB:
+        logger.error("Database connection not available")
+        raise HTTPException(status_code=500, detail="Database connection error")
+    
+    if not authorization or not authorization.startswith("Bearer "):
+        raise HTTPException(status_code=401, detail="Missing or invalid authorization header")
+    
+    try:
+        # Extract token
+        token = authorization.replace("Bearer ", "")
+        
+        # Verify token with Supabase
+        auth_response = SB.auth.get_user(token)
+        if not auth_response or not auth_response.user:
+            raise HTTPException(status_code=401, detail="Invalid token")
+        
+        user = auth_response.user
+        user_id = user.id
+        email = user.email
+        
+        # Fetch user profile from profiles table
+        profile_result = SB.table("profiles").select("role, full_name").eq("id", user_id).limit(1).execute()
+        
+        if profile_result.data and len(profile_result.data) > 0:
+            profile = profile_result.data[0]
+            return {
+                "id": user_id,
+                "email": email,
+                "role": profile.get("role", "billing"),  # Default to billing if not set
+                "name": profile.get("full_name", email.split("@")[0])
+            }
+        else:
+            # No profile found, return default
+            logger.warning(f"No profile found for user {user_id}, returning defaults")
+            return {
+                "id": user_id,
+                "email": email,
+                "role": "billing",  # Default role
+                "name": email.split("@")[0] if email else "User"
+            }
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching user profile: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
+@app.get("/api/imports/history")
+async def get_import_history():
+    """Get recent import runs with statistics"""
+    if not SB:
+        logger.error("Database connection not available")
+        raise HTTPException(status_code=500, detail="Database connection error")
+    
+    try:
+        # Query import_runs table, get last 20 imports
+        result = SB.table("import_runs").select(
+            "id, source, file_name, started_at, finished_at, "
+            "total_rows, inserted_rows, updated_rows, flagged_rows, errors"
+        ).order("started_at", desc=True).limit(20).execute()
+        
+        logger.info(f"Found {len(result.data) if result.data else 0} import runs")
+        return result.data if result.data else []
+    except Exception as e:
+        logger.error(f"Error fetching import history: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/imports/test-connection")
 async def test_database_connection():
     """Test database connection and return status"""
