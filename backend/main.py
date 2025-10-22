@@ -520,6 +520,29 @@ async def import_simplepractice(file: UploadFile = File(...)):
             errors=1
         )
 
+@app.get("/api/sessions")
+async def get_sessions():
+    """Get all sessions with client and provider names"""
+    if not SB:
+        logger.error("Database connection not available")
+        raise HTTPException(status_code=500, detail="Database connection error")
+    
+    try:
+        # Query sessions with joins to clients and providers
+        result = SB.table("sessions").select(
+            "id, session_date, client_id, provider_id, minutes, note_submitted, "
+            "billing_status, amount_billed, amount_paid, date_submitted, date_paid, "
+            "clients(name), providers(name)"
+        ).order("session_date", desc=True).execute()
+        
+        logger.info(f"Found {len(result.data) if result.data else 0} sessions")
+        return result.data if result.data else []
+    except Exception as e:
+        logger.error(f"Error fetching sessions: {e}")
+        import traceback
+        logger.error(traceback.format_exc())
+        raise HTTPException(status_code=500, detail=str(e))
+
 @app.get("/api/imports/test-connection")
 async def test_database_connection():
     """Test database connection and return status"""
