@@ -279,15 +279,31 @@ async def import_simplepractice(file: UploadFile = File(...)):
             total += 1
             
             try:
-                # Extract fields (handle various column name formats)
+                # Extract fields (handle BOTH SimplePractice CSV formats)
                 client_name = row.get("Client", row.get("client", "")).strip()
                 client_type = row.get("Client type", row.get("client_type", "")).strip()
-                service_date = row.get("Date added", row.get("service_date", "")).strip()
-                provider_name = row.get("Primary clinician", row.get("provider", "")).strip()
+                
+                # Handle BOTH "Date of Service" (new format) and "Date added" (old format)
+                service_date = row.get("Date of Service", row.get("Date added", row.get("service_date", ""))).strip()
+                
+                # Handle BOTH "Clinician" (new format) and "Primary clinician" (old format)
+                provider_name = row.get("Clinician", row.get("Primary clinician", row.get("provider", ""))).strip()
+                
+                # Parse start_time from "Date of Service" if needed (format: "10/06/2025 12:00")
                 start_time = row.get("Start time", row.get("start_time", "")).strip()
+                if not start_time and service_date and " " in service_date:
+                    # Extract time from "MM/DD/YYYY HH:MM" format
+                    date_parts = service_date.split(" ", 1)
+                    if len(date_parts) == 2:
+                        service_date = date_parts[0]  # Just the date part
+                        start_time = date_parts[1]     # Just the time part
+                
                 end_time = row.get("End time", row.get("end_time", "")).strip()
                 minutes_str = row.get("Minutes", row.get("minutes", "")).strip()
-                primary_insurance = row.get("Primary insurance", row.get("insurance", "")).strip()
+                
+                # Handle BOTH "Primary Insurance" (new format) and "Primary insurance" (old format)
+                primary_insurance = row.get("Primary Insurance", row.get("Primary insurance", row.get("insurance", ""))).strip()
+                
                 billing_route = row.get("Billing route", row.get("billing_route", "simplepractice")).strip()
                 status = row.get("Status", row.get("status", "")).strip()
                 notes = row.get("Notes", row.get("notes", "")).strip()

@@ -1,0 +1,25 @@
+Date of Service,Client,Clinician,Billing Code,Primary Insurance,Secondary Insurance,Rate per Unit,Units,Total Fee,Client Payment Status,Charge,Uninvoiced,Paid,Unpaid,Insurance Payment Status,Charge,Paid,Unpaid
+10/06/2025 12:00,Will Corley,Edison Jaquez,90837 ,Tricare East (99727),"",160.0 ,1 ,160.0,PAID,38.0,0.0,38.0,0.0,PAID,122.0,30.85,0.0
+10/06/2025 13:00,Sharron Alexander,Edison Jaquez,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/06/2025 15:30,Mia Luce,Rhianna Byrne,90837 ,CIGNA Premier Plus (62308),"",80.0 ,1 ,80.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,80.0,0.0,80.0
+10/06/2025 18:00,Angie Ortiz,Diamond Williams,90837 ,Tricare East (99727),"",160.0 ,1 ,160.0,PAID,32.0,0.0,32.0,0.0,OVER,128.0,68.85,-32.0
+10/06/2025 19:00,Christina Collins,Lateefah Thompsom,90837 ,Meritain Health (64157),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/07/2025 12:00,Lessi Cruz,Diamond Williams,90837 ,AmeriChoice NJ  Medicaid  NJ Family Care (UnitedHealthcare Community Plan) (86047),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/07/2025 16:00,"Jacob, JJ, or Jake Kelly",Dymir Tatem,90837 ,AETNA (60054),"",120.0 ,1 ,120.0,UNPAID,15.0,0.0,0.0,15.0,OVER,105.0,145.0,-40.0
+10/07/2025 16:45,Gianna Holness,LaTaisha Pipes,90791 ,United HealthCare (87726),"",200.0 ,1 ,200.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,200.0,0.0,200.0
+10/07/2025 19:00,Krissy Corley,LaTaisha Pipes,90837 ,Tricare East (99727),"",160.0 ,1 ,160.0,PAID,38.0,0.0,38.0,0.0,PAID,122.0,30.85,0.0
+10/08/2025 13:00,Aljumel Robinson,Dymir Tatem,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/08/2025 14:00,Carter Conover,Edison Jaquez,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/08/2025 17:00,Jaunice Sanders,LaTaisha Pipes,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/08/2025 17:00,Kelly Bunker,Dr Kandice N. Cooper,90837 ,Horizon Blue Cross Blue Shield of New Jersey (22099),"",160.0 ,1 ,160.0,PAID,35.0,0.0,35.0,0.0,OVER,125.0,99.31,-29.31
+10/08/2025 19:00,Melissa Alston,Dr Kandice N. Cooper,90837 ,Blue Cross of New Jersey Horizon (22099),"",160.0 ,1 ,160.0,PAID,10.0,0.0,10.0,0.0,OVER,150.0,124.31,-0.27
+10/09/2025 15:15,Zoey Aron,Rhianna Byrne,90837 ,AETNA (60054),"",160.0 ,1 ,160.0,PAID,40.0,0.0,40.0,0.0,UNPAID,120.0,0.0,120.0
+10/09/2025 16:00,Braeden Martin,Dymir Tatem,90837 ,Tricare East (99727),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,PAID,160.0,68.85,0.0
+10/09/2025 16:30,Kelila Israel,LaTaisha Pipes,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,PAID,160.0,90.26,0.0
+10/09/2025 17:30,Londyn Colon,LaTaisha Pipes,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/10/2025 10:00,Josh Steeley,Edison Jaquez,90791 ,Blue Cross Blue Shield of New Jersey (22099),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
+10/10/2025 15:00,Daniel Repsik,Edison Jaquez,90837 ,AETNA (60054),"",160.0 ,1 ,160.0,PAID,5.0,0.0,5.0,0.0,PAID,155.0,155.0,0.0
+10/10/2025 15:30,Liz Brown,Diamond Williams,90837 ,Blue Cross of New Jersey Horizon (22099),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,PAID,160.0,134.31,0.0
+10/10/2025 15:30,Tangeleke Bailey,Lateefah Thompsom,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,PAID,160.0,90.26,0.0
+10/10/2025 16:30,Ambyr Williams,Lateefah Thompsom,90791 ,Horizon NJ Health (22326),"",200.0 ,1 ,200.0,NO CHARGE,0.0,0.0,0.0,0.0,PAID,200.0,200.0,0.0
+10/10/2025 17:00,Jason Sanders,Edison Jaquez,90837 ,Horizon NJ Health (22326),"",160.0 ,1 ,160.0,NO CHARGE,0.0,0.0,0.0,0.0,UNPAID,160.0,0.0,160.0
