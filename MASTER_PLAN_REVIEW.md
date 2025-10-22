@@ -358,3 +358,37 @@ The CSV import required providers and clients to already exist in the database. 
 - **Deployed to:** Render (auto-deploy)
 - **Status:** Live in ~5 minutes
 - **Git Commit:** `9e45582` - "fix: auto-create providers and clients during CSV import"
+
+---
+
+## 🔧 **DEBUGGING SESSION - Oct 21, 2025 (Continued)**
+
+### **Issue Update: Root Cause Investigation**
+
+**Problem Persists:**
+- CSV still shows 0 imported, 19 flagged
+- Error: "Missing Provider" 
+- RLS policies fixed (disabled + service role policies added)
+- Backend deployed with find_or_create functions
+- Functions are failing silently
+
+**Diagnostic Results:**
+- `missing_provider: 221 rows` (cumulative from all imports)
+- `missing_client: 14 rows` (cumulative from all imports)
+- Latest upload: Still 19 flagged with "Missing Provider" error
+
+**Attempted Fixes:**
+1. ✅ Added find_or_create_provider() function
+2. ✅ Added find_or_create_client() function  
+3. ✅ Disabled RLS on providers/clients tables
+4. ✅ Added service role INSERT policies
+5. ✅ Forced Render redeploy
+6. ❌ **Still failing - investigating function logic**
+
+**Current Investigation:**
+- Testing if providers table has issues
+- Checking if insert statements work manually
+- Debugging why find_or_create returns None
+- Next: Add comprehensive logging and test insert
+
+**Working On:** Root cause analysis of find_or_create failure
