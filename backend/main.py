@@ -208,8 +208,8 @@ def find_or_create_payer(insurance_string: str, billing_route: str = "simpleprac
     
     return None
 
-@app.post("/api/imports/simplepractice-fixed", response_model=ImportResult)
-async def import_simplepractice_fixed(file: UploadFile = File(...)):
+@app.post("/api/imports/simplepractice", response_model=ImportResult)
+async def import_simplepractice(file: UploadFile = File(...)):
     """
     Fixed version of the SimplePractice CSV import handler
     """
