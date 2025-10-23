@@ -1,48 +1,28 @@
-# --- General OS / Editor ---
-.DS_Store
-Thumbs.db
-*.swp
-.idea/
-.vscode/
-
-# --- Node / Frontend ---
+# Dependencies
 node_modules/
-frontend/node_modules/
-frontend/.svelte-kit/
-frontend/.vite/
-frontend/build/
-frontend/dist/
-frontend/.vercel/
-.vercel/
-
-# --- Python / Backend ---
-backend/venv/
-venv/
-__pycache__/
-**/__pycache__/
-*.py[cod]
+vendor/
 *.pyc
+__pycache__/
 
-# --- Environment & Secrets ---
+# Build outputs
+dist/
+build/
+*.app
+*.exe
+out/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+
+# Environment
 .env
-*.env
-.env.*
-backend/.env
-frontend/.env
-*.pem
-*.key
-
-# --- SSH Keys (never commit private keys) ---
-id_ed25519
-id_ed25519.pub
-.ssh/
-
-# --- Logs & Temp ---
+.env.local
 *.log
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-.pnpm-store/
 
-# --- Misc ---
-coverage/
+# OS
+Thumbs.db
