@@ -23,6 +23,12 @@
       const savedPosition = localStorage.getItem('floatingRoleSwitcherPosition');
       if (savedPosition) {
         position = JSON.parse(savedPosition);
+      } else {
+        // Default position: bottom-right corner
+        position = {
+          x: window.innerWidth - 300, // Account for button width
+          y: window.innerHeight - 200  // Account for button height
+        };
       }
 
       // Load current role from sessionStorage
@@ -37,8 +43,13 @@
     }
   });
 
-  function toggleDropdown() {
+  function toggleDropdown(event: MouseEvent) {
+    // Don't toggle if we're dragging
+    if (isDragging) {
+      return;
+    }
     isOpen = !isOpen;
+    event.stopPropagation();
   }
 
   function selectRole(role: typeof roles[0]) {
@@ -59,6 +70,12 @@
   }
 
   function startDrag(event: MouseEvent) {
+    // Only start drag if clicking on the drag handle area (not the button text)
+    const target = event.target as HTMLElement;
+    if (target.closest('button') && !target.closest('.drag-handle')) {
+      return; // Don't start drag if clicking the button itself
+    }
+
     isDragging = true;
     dragOffset.x = event.clientX - position.x;
     dragOffset.y = event.clientY - position.y;
@@ -66,6 +83,7 @@
     document.addEventListener('mousemove', handleDrag);
     document.addEventListener('mouseup', stopDrag);
     event.preventDefault();
+    event.stopPropagation();
   }
 
   function handleDrag(event: MouseEvent) {
@@ -75,8 +93,10 @@
     position.y = event.clientY - dragOffset.y;
 
     // Keep within viewport bounds
-    const maxX = window.innerWidth - 60; // Button width
-    const maxY = window.innerHeight - 60; // Button height
+    const buttonWidth = 300; // Approximate button + dropdown width
+    const buttonHeight = 200; // Approximate button + dropdown height
+    const maxX = window.innerWidth - buttonWidth;
+    const maxY = window.innerHeight - buttonHeight;
 
     position.x = Math.max(0, Math.min(position.x, maxX));
     position.y = Math.max(0, Math.min(position.y, maxY));
@@ -117,12 +137,22 @@
 <!-- Floating Role Switcher -->
 <div
   class="fixed z-50 transition-all duration-200 {isDragging ? 'scale-105' : 'hover:scale-105'}"
-  style="right: {position.x}px; bottom: {position.y}px;"
+  style="left: {position.x}px; top: {position.y}px;"
 >
+  <!-- Drag Handle -->
+  <div
+    class="absolute -left-2 -top-2 w-6 h-6 bg-slate-400 rounded-full cursor-move drag-handle flex items-center justify-center opacity-0 hover:opacity-100 transition-opacity"
+    onmousedown={startDrag}
+    title="Drag to move"
+  >
+    <svg class="w-3 h-3 text-white" fill="currentColor" viewBox="0 0 24 24">
+      <path d="M3 15h18v-2H3v2zm0 4h18v-2H3v2zm0-8h18V9H3v2zm0-6v2h18V5H3z"/>
+    </svg>
+  </div>
+
   <!-- Main Button -->
   <button
-    class="flex items-center gap-2 rounded-full bg-white shadow-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:shadow-xl transition-all duration-200 cursor-move"
-    onmousedown={startDrag}
+    class="flex items-center gap-2 rounded-full bg-white shadow-lg border border-slate-200 px-4 py-2 text-sm font-medium text-slate-700 hover:shadow-xl transition-all duration-200"
     onclick={toggleDropdown}
     aria-label="Role Switcher"
   >
@@ -145,7 +175,7 @@
 
   <!-- Dropdown Menu -->
   {#if isOpen}
-    <div class="absolute bottom-full right-0 mb-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+    <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
       <div class="p-3 bg-slate-50 border-b border-slate-200">
         <h3 class="text-sm font-semibold text-slate-700">Switch Role</h3>
         <p class="text-xs text-slate-500 mt-1">Test different user permissions</p>

@@ -1,6 +1,7 @@
 # 🎯 FSC Portal - Master Plan Review
-**Date:** October 21, 2025  
-**Current Status:** Week 3 Complete | Ready for User Validation  
+
+**Date:** October 21, 2025
+**Current Status:** Week 3 Complete | Ready for User Validation
 **Next Milestone:** Mackenzi Validation Session
 
 ---
@@ -8,10 +9,12 @@
 ## 📊 Project Timeline Overview
 
 ### ✅ **Phase 1: Foundation (COMPLETE)**
-**Timeline:** Weeks 1-2  
+
+**Timeline:** Weeks 1-2
 **Status:** 100% Complete
 
 #### Accomplishments:
+
 - ✅ **Database Schema** - Complete PostgreSQL schema with RLS policies
 - ✅ **Authentication** - Magic link email authentication via Supabase
 - ✅ **CSV Import** - SimplePractice CSV parsing with deduplication
@@ -21,6 +24,7 @@
 - ✅ **Deployment** - Render (backend) + Vercel (frontend)
 
 #### Technical Stack:
+
 - **Frontend:** SvelteKit 2 + Svelte 5 + Tailwind v4 + TypeScript
 - **Backend:** FastAPI + Python 3.12
 - **Database:** Supabase (PostgreSQL)
@@ -29,10 +33,12 @@
 ---
 
 ### ✅ **Phase 2: Revenue Cycle Management (BACKEND COMPLETE)**
-**Timeline:** Weeks 3-8  
+
+**Timeline:** Weeks 3-8
 **Status:** Backend 100%, Frontend UI 80%
 
 #### Completed:
+
 - ✅ **Billing Status System** - 10-stage lifecycle tracking
 - ✅ **Insurance Portals** - Portal management for billing staff
 - ✅ **Payment Tracking** - Record and reconcile payments
@@ -43,6 +49,7 @@
 - ✅ **Revenue Dashboard Page** - Key metrics display
 
 #### Database Tables Created:
+
 1. **payers** - Insurance company master data
 2. **insurance_portals** - Portal URLs and login info
 3. **payments** - Payment records and reconciliation
@@ -51,16 +58,19 @@
 6. **alerts** - Automated notifications
 
 #### Views Created:
+
 - **dashboard_metrics** - Real-time revenue KPIs
 - **aging_report** - Outstanding claims by age bucket
 
 ---
 
 ### ✅ **Week 3: UI/UX Improvements (JUST COMPLETED)**
-**Timeline:** This Week  
+
+**Timeline:** This Week
 **Status:** 100% Complete
 
 #### Just Completed (Today):
+
 1. ✅ **Active Nav State Indicator** - Highlights current page
 2. ✅ **User Menu with Email/Sign Out** - Professional user dropdown
 3. ✅ **Mobile Hamburger Menu** - Responsive navigation
@@ -69,6 +79,7 @@
 6. ✅ **FSC Logo Integration** - Your branding throughout
 
 #### UI Improvements Details:
+
 - **Mobile-First Design** - Works perfectly on phones/tablets
 - **Touch-Friendly** - Optimized for mobile interactions
 - **Professional Polish** - Modern, clean interface
@@ -80,6 +91,7 @@
 ## 🎯 Current Position in Master Plan
 
 ### **Where We Are:**
+
 ```
 Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
                                                          ↓
@@ -91,11 +103,13 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ### **Immediate Next Steps:**
 
 #### 1. **Mackenzi Validation Session** (THIS WEEK)
-**Priority:** HIGH  
-**Status:** Ready to Schedule  
+
+**Priority:** HIGH
+**Status:** Ready to Schedule
 **Duration:** 30-45 minutes
 
 **What Mackenzi Will Test:**
+
 - ✅ CSV Import with real SimplePractice data
 - ✅ Data accuracy (client/provider names)
 - ✅ Billing status assignments
@@ -103,6 +117,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - ✅ Overall usability and workflow
 
 **Expected Outcomes:**
+
 - Validation that system meets real-world needs
 - List of missing insurance payers (if any)
 - UI/UX feedback for improvements
@@ -112,10 +127,12 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ---
 
 #### 2. **Incorporate Mackenzi's Feedback** (Days 1-2 After Testing)
-**Timeline:** 1-2 days  
+
+**Timeline:** 1-2 days
 **Priority:** HIGH
 
 **Actions:**
+
 - [ ] Add any missing insurance payers to system
 - [ ] Implement UI tweaks she requests
 - [ ] Fix any data mapping issues
@@ -125,10 +142,12 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ---
 
 #### 3. **Production Deployment** (Week 4)
-**Timeline:** After validation  
+
+**Timeline:** After validation
 **Priority:** HIGH
 
 **Checklist:**
+
 - [ ] All Mackenzi feedback implemented
 - [ ] Final QA testing complete
 - [ ] Backend deployed to Render
@@ -141,10 +160,12 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 📋 Master Plan: Remaining Phases
 
 ### **Phase 3: Advanced Features** (Weeks 5-8)
-**Status:** NOT STARTED  
+
+**Status:** NOT STARTED
 **Priority:** MEDIUM
 
 #### Planned Features:
+
 1. **Status Change UI** - Dropdown to change billing status
 2. **Bulk Actions** - Update multiple sessions at once
 3. **Claim Tracker** - Detailed claim status page
@@ -157,10 +178,12 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ---
 
 ### **Phase 4: Reporting & Analytics** (Weeks 9-12)
-**Status:** NOT STARTED  
+
+**Status:** NOT STARTED
 **Priority:** MEDIUM
 
 #### Planned Features:
+
 1. **Revenue Reports** - Monthly/quarterly revenue analysis
 2. **Provider Metrics** - Sessions and revenue by provider
 3. **Payer Analysis** - Payment speed and denial rates
@@ -172,10 +195,12 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ---
 
 ### **Phase 5: Automation & Optimization** (Weeks 13+)
-**Status:** NOT STARTED  
+
+**Status:** NOT STARTED
 **Priority:** LOW
 
 #### Planned Features:
+
 1. **Automated Alerts** - Email/SMS notifications
 2. **Smart Recommendations** - AI-suggested actions
 3. **Batch Processing** - Bulk status updates
@@ -189,6 +214,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 📈 Success Metrics & ROI
 
 ### **Target Metrics:**
+
 - **Unbilled Sessions:** <10 at any time
 - **Outstanding Claims:** Track vs goal
 - **Avg Days to Payment:** <45 days
@@ -198,6 +224,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - **Staff Efficiency:** Balance workload
 
 ### **Expected ROI:**
+
 - **Time Savings:** 5 hours/week → 1 hour/week (80% reduction)
 - **Faster Reconciliation:** 3 hours/week → 30 minutes/week
 - **Automated Tracking:** 2 hours/week saved
@@ -209,6 +236,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 🚀 Technology Stack Summary
 
 ### **Frontend:**
+
 - **Framework:** SvelteKit 2 + Svelte 5
 - **Styling:** Tailwind CSS v4
 - **Language:** TypeScript
@@ -217,6 +245,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - **Deployment:** Vercel
 
 ### **Backend:**
+
 - **Framework:** FastAPI
 - **Language:** Python 3.12
 - **Authentication:** JWT via Supabase
@@ -224,6 +253,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - **Deployment:** Render
 
 ### **Database:**
+
 - **Platform:** Supabase (PostgreSQL)
 - **Security:** Row Level Security (RLS)
 - **Migrations:** SQL scripts
@@ -234,6 +264,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 📊 Current System Capabilities
 
 ### **✅ What's Working:**
+
 1. **User Authentication** - Magic link email login
 2. **CSV Import** - SimplePractice file uploads
 3. **Session Management** - View, search, filter sessions
@@ -246,6 +277,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 10. **User Menu** - Profile and sign-out functionality
 
 ### **⚠️ What Needs Work:**
+
 1. **Status Change UI** - Add dropdown to change billing status
 2. **Payment Entry UI** - Quick payment recording form
 3. **Bulk Actions** - Select and update multiple sessions
@@ -258,6 +290,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 🎯 Next 30 Days Roadmap
 
 ### **Week 4: Mackenzi Validation & Deployment**
+
 - [ ] Schedule and complete Mackenzi validation
 - [ ] Implement feedback (1-2 days)
 - [ ] Final QA testing
@@ -265,12 +298,14 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - [ ] User training session
 
 ### **Week 5-6: Status Change & Payment Entry**
+
 - [ ] Build status change dropdown UI
 - [ ] Add payment entry form
 - [ ] Implement bulk actions
 - [ ] Enhanced session detail pages
 
 ### **Week 7-8: Reporting & Polish**
+
 - [ ] Aging report with filters
 - [ ] Revenue dashboard enhancements
 - [ ] Export functionality
@@ -281,12 +316,14 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ## 📞 Support & Resources
 
 ### **Documentation:**
+
 - ✅ Master documentation in `archive/documentation/`
 - ✅ Quick reference guides created
 - ✅ SQL scripts in `sql/essential/`
 - ✅ Deployment guides available
 
 ### **Environment:**
+
 - **Production:** https://app.fscnj.com
 - **Supabase:** https://supabase.com/dashboard
 - **Backend API:** Render deployment
@@ -299,6 +336,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 ### **Current Status: WEEK 3 COMPLETE ✅**
 
 **What We Just Finished:**
+
 - ✅ All Week 3 UI/UX improvements
 - ✅ Mobile-responsive design
 - ✅ Professional error handling
@@ -306,12 +344,14 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - ✅ Your FSC logo integrated
 
 **What's Next:**
+
 1. **Mackenzi Validation Session** - Schedule this week
 2. **Implement Feedback** - 1-2 days
 3. **Production Deployment** - Week 4
 4. **Advanced Features** - Weeks 5-8
 
 **System Status:**
+
 - **Phase 1:** 100% Complete ✅
 - **Phase 2 Backend:** 100% Complete ✅
 - **Phase 2 Frontend:** 80% Complete ⚡
@@ -319,6 +359,7 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 - **Overall:** ~85% to MVP
 
 **Ready For:**
+
 - ✅ User validation testing
 - ✅ Real-world CSV imports
 - ✅ Mobile usage
@@ -330,30 +371,160 @@ Phase 1 (Complete) → Phase 2 Backend (Complete) → Week 3 UI (JUST COMPLETED)
 
 ---
 
+## 📋 **CSV Upload Documentation - Simple Guide**
+
+### **🎯 For All Departments: How to Upload Weekly CSVs**
+
+**What This Does:** Uploads your SimplePractice session data into the FSC Portal system.
+
+---
+
+### **👥 Who Can Upload CSVs?**
+
+- ✅ **Admin** - Can upload and see all data
+- ✅ **Billing Staff** - Can upload and process billing data
+- ❌ **Providers** - Cannot upload (view only)
+
+---
+
+### **📁 Step-by-Step Instructions**
+
+#### **Step 1: Get Your CSV File**
+
+1. Open SimplePractice
+2. Go to Reports → Appointments
+3. Select last week's date range
+4. Export as CSV
+5. Save to your computer
+
+#### **Step 2: Upload to FSC Portal**
+
+1. Go to: https://app.fscnj.com/case-manager/import
+2. Click "Choose File"
+3. Select your CSV file
+4. Click "Upload & Process"
+5. Wait for results
+
+#### **Step 3: Check Results**
+
+**✅ Good Results:**
+
+- Green checkmark ✅
+- Shows "X Records Imported"
+- Low or zero "Flagged" count
+
+**⚠️ Needs Attention:**
+
+- Yellow warning ⚠️
+- Shows "Flagged" items
+- Review flagged records
+
+---
+
+### **🔍 What Gets Imported**
+
+**✅ Always Imported:**
+
+- Client names
+- Provider names
+- Session dates
+- Session duration
+- Billing amounts
+
+**⚠️ May Be Flagged:**
+
+- Missing insurance info
+- Unknown providers
+- Invalid dates
+- Duplicate sessions
+
+---
+
+### **🚨 Troubleshooting**
+
+#### **Upload Stuck on "Uploading..."**
+
+1. Check internet connection
+2. Refresh the page
+3. Try smaller file
+4. Contact admin if still stuck
+
+#### **"Flagged" Records**
+
+- **Don't worry!** This is normal
+- System flags missing data for review
+- Most flagged records are still imported
+- Admin can fix flagged items later
+
+#### **"Error" Messages**
+
+- Check CSV file format
+- Make sure it's from SimplePractice
+- Try re-exporting the file
+- Contact admin if errors persist
+
+---
+
+### **📊 Understanding Results**
+
+**Inserted:** New sessions added to system
+**Updated:** Existing sessions modified
+**Flagged:** Sessions with missing data (review needed)
+**Duplicates:** Sessions already in system (skipped)
+
+---
+
+### **💡 Pro Tips**
+
+1. **Upload Weekly** - Don't wait too long between uploads
+2. **Check Results** - Always review flagged items
+3. **Save Files** - Keep CSV backups for reference
+4. **Ask Questions** - Contact admin if unsure
+
+---
+
+### **📞 Need Help?**
+
+- **Admin:** Check with Dymir
+- **Technical Issues:** Contact admin
+- **Training:** Schedule session with admin
+
+---
+
+**🎉 That's It! Upload your CSV every week and the system handles the rest!**
+
+---
+
 ## 🔧 **LIVE TESTING UPDATE - Oct 21, 2025**
 
 ### **Issue Found During Mackenzi Testing:**
+
 - ✅ Login worked perfectly
 - ✅ CSV upload accepted file
 - ❌ **0 sessions imported, 19 flagged** - Providers/clients didn't exist
 
 ### **Root Cause:**
+
 The CSV import required providers and clients to already exist in the database. When they didn't exist, sessions were flagged instead of imported.
 
 ### **Fix Applied (Deployed):**
+
 ✅ **Auto-create providers and clients during import**
+
 - Added `find_or_create_provider()` function
 - Added `find_or_create_client()` function
 - CSV import now automatically creates missing entries
 - No more flagged rows for missing providers/clients
 
 ### **Re-Test Instructions for Mackenzi:**
+
 1. **Wait 5 minutes** for deployment to complete
 2. **Re-upload the same CSV file** at `https://app.fscnj.com`
 3. **Expected Result:** 19 sessions imported, 0 flagged
 4. **Verify:** Sessions page shows all 19 sessions with correct names
 
 ### **Deployment:**
+
 - **Committed:** Oct 21, 2025
 - **Deployed to:** Render (auto-deploy)
 - **Status:** Live in ~5 minutes
@@ -370,9 +541,11 @@ We discovered and fixed **3 CRITICAL BUGS** in succession:
 ---
 
 ### **Bug 1: Wrong CSV Column Names**
+
 **Problem:** Backend expected mock CSV format, not actual SimplePractice format
 **Symptoms:** 0 imported, 19 flagged "missing_provider, date"
 **Root Cause:** Column mapping mismatch
+
 - Backend looked for: `Date added`, `Primary clinician`
 - CSV actually had: `Date of Service`, `Clinician`
 
@@ -383,6 +556,7 @@ We discovered and fixed **3 CRITICAL BUGS** in succession:
 ---
 
 ### **Bug 2: Insurance Flagging Logic Too Strict**
+
 **Problem:** All rows flagged as "Unknown Insurance"
 **Symptoms:** 0 imported, 19 flagged "unknown_insurance"
 **Root Cause:** Backend flagged ANY unknown insurance instead of auto-creating
@@ -394,24 +568,28 @@ We discovered and fixed **3 CRITICAL BUGS** in succession:
 ---
 
 ### **Bug 3: CRITICAL - Wrong Database Column Name**
+
 **Problem:** Payer creation failing with PostgreSQL error
 **Symptoms:** 1 imported, 18 flagged "payer_creation_failed"
 **Root Cause:** Backend used `payers.uuid` but table uses `payers.id`!
 
 **PostgreSQL Error:**
+
 ```
-postgrest.exceptions.APIError: 
-{'message': 'column payers.uuid does not exist', 
+postgrest.exceptions.APIError:
+{'message': 'column payers.uuid does not exist',
  'hint': 'Perhaps you meant to reference the column "payers.id"'}
 ```
 
 **The Smoking Gun:**
+
 - Backend tried: `SELECT uuid FROM payers` ❌
 - Table actually has: `id` (auto-increment integer) ✅
 - Backend tried: `INSERT (uuid, name, ...)` ❌
 - Table expects: `INSERT (name, ...)` (id auto-generated) ✅
 
-**Fix:** 
+**Fix:**
+
 - Changed `find_or_create_payer` to use `id` instead of `uuid`
 - Removed manual UUID generation
 - Updated `sessions.payer_uuid` → `sessions.payer_id`
@@ -420,6 +598,7 @@ postgrest.exceptions.APIError:
 **Result:** PAYERS NOW AUTO-CREATE! ✅
 
 **Final Status:**
+
 ```
 ✅ 1 Updated (session already existed from testing)
 ✅ 1 Flagged (Kelly Bunker - edge case, acceptable)
@@ -431,11 +610,13 @@ postgrest.exceptions.APIError:
 ---
 
 ### **Bug 4: Missing API Endpoints**
+
 **Problem:** Sessions page showed 0 despite successful import
 **Symptoms:** "No sessions found" even though 6 exist in database
 **Root Cause:** Frontend called `/api/sessions` but endpoint didn't exist!
 
 **Missing Endpoints:**
+
 - ❌ `/api/sessions` - Get all sessions
 - ❌ `/api/user/profile` - Get user role
 - ❌ `/api/imports/history` - Get import history
@@ -449,24 +630,31 @@ postgrest.exceptions.APIError:
 ## 📚 **KEY LESSONS LEARNED**
 
 ### **1. Always Check Actual Database Schema**
+
 Don't assume column names - verify with:
+
 ```sql
-SELECT column_name, data_type 
-FROM information_schema.columns 
+SELECT column_name, data_type
+FROM information_schema.columns
 WHERE table_name = 'your_table';
 ```
 
 ### **2. Test with Real Data Early**
+
 Mock CSVs can hide column name mismatches. Use actual exports ASAP.
 
 ### **3. Read PostgreSQL Error Messages Carefully**
+
 The hint literally said "Perhaps you meant payers.id" - that was the answer!
 
 ### **4. RLS vs Column Issues**
+
 We initially suspected RLS, but it was actually a column name issue. Check schema first.
 
 ### **5. API Endpoint Inventory**
+
 Frontend and backend can get out of sync. Always verify:
+
 ```bash
 grep -r "fetch.*api/" frontend/  # Find all API calls
 grep "@app\." backend/main.py     # Find all endpoints
@@ -477,6 +665,7 @@ grep "@app\." backend/main.py     # Find all endpoints
 ## ✅ **FINAL WORKING SYSTEM (Oct 22, 2025, 6:51 PM)**
 
 ### **Backend - 5 Endpoints (100% Complete):**
+
 1. `POST /api/imports/simplepractice` - CSV upload with auto-create
 2. `GET /api/sessions` - Fetch all sessions with joins
 3. `GET /api/user/profile` - User role and info
@@ -484,18 +673,21 @@ grep "@app\." backend/main.py     # Find all endpoints
 5. `GET /api/imports/test-connection` - Health check
 
 ### **Auto-Create Logic (100% Working):**
+
 - ✅ Providers: Auto-created if not found
 - ✅ Clients: Auto-created if not found
 - ✅ Payers: Auto-created if not found
 - ✅ Sessions: Inserted or updated (duplicate detection)
 
 ### **Database Status:**
+
 - ✅ 6 sessions in database
 - ✅ Multiple providers, clients, payers
 - ✅ Correct schema (`payers.id` not `uuid`)
 - ✅ RLS policies active
 
 ### **Deployment Status:**
+
 - ✅ All commits pushed to GitHub
 - ✅ Render auto-deploying (commit `415cf42`)
 - ✅ Frontend on Vercel (may show cached UI, but endpoints work)
@@ -505,6 +697,7 @@ grep "@app\." backend/main.py     # Find all endpoints
 ## 🎯 **DEMO READINESS: 95%**
 
 ### **What Works:**
+
 ✅ CSV import with auto-create everything
 ✅ Sessions page (after Render deploys)
 ✅ User profile display
@@ -513,10 +706,12 @@ grep "@app\." backend/main.py     # Find all endpoints
 ✅ Error flagging for review
 
 ### **Known Issues (Minor):**
+
 ⚠️ 1 row always flags (Kelly Bunker - acceptable, shows system working)
 ⚠️ Frontend may show cached UI (direct URL workaround available)
 
 ### **Success Metrics:**
+
 - **Upload Success Rate:** 95% (18/19 rows)
 - **API Completeness:** 100% (5/5 endpoints)
 - **Auto-Create Logic:** 100% (all 3 entity types)
@@ -538,6 +733,7 @@ grep "@app\." backend/main.py     # Find all endpoints
    - Click "Upload CSV"
 
 3. **Expected Results:**
+
    ```
    ✅ 24 Records Imported
    ✅ 0 Flagged Rows
@@ -552,11 +748,13 @@ grep "@app\." backend/main.py     # Find all endpoints
 ### **If Something Goes Wrong:**
 
 **Check Render Logs:**
+
 1. Render Dashboard → Backend Service → Logs tab
 2. Look for "INFO:" or "ERROR:" lines
 3. Take screenshot
 
 **Check Supabase:**
+
 ```sql
 -- Latest import status
 SELECT * FROM import_runs ORDER BY started_at DESC LIMIT 1;
@@ -573,25 +771,28 @@ SELECT COUNT(*) FROM sessions WHERE imported_at > NOW() - INTERVAL '10 minutes';
 **Problem:** Backend looked for wrong CSV column names (mock format vs actual SimplePractice)
 
 **Solution:** Updated parser to check both formats:
+
 - `Date of Service` (new) + `Date added` (old)
 - `Clinician` (new) + `Primary clinician` (old)
 - `Primary Insurance` (new) + `Primary insurance` (old)
 
 **Files Changed:**
+
 - `backend/main.py` - Updated CSV column mapping (lines 282-309)
 - `backend/sample_data/simplepractice_actual.csv` - Added real CSV sample
 
 **Deployment:**
+
 - Commit: `ce168e8`
 - Status: Deployed to Render
 - Confidence: 95% this fixes the issue
 
 ### **Success Indicators:**
 
-✅ Import shows "24 Records Imported"  
-✅ No flagged rows  
-✅ New providers in database  
-✅ New sessions visible in Sessions page  
-✅ Correct dates and names  
+✅ Import shows "24 Records Imported"
+✅ No flagged rows
+✅ New providers in database
+✅ New sessions visible in Sessions page
+✅ Correct dates and names
 
 **System is production-ready after this test passes!** 🚀
