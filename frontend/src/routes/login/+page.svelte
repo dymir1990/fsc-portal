@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
   import { supabase } from '$lib/supabaseClient';
   import { goto } from '$app/navigation';
 
@@ -44,17 +44,25 @@
     success = '';
 
     try {
+      console.log('Attempting password reset for:', email);
+      console.log('Redirect URL:', `${window.location.origin}/reset-password`);
+
       const { error: resetError } = await supabase.auth.resetPasswordForEmail(email, {
         redirectTo: `${window.location.origin}/reset-password`,
       });
 
+      console.log('Reset response:', { resetError });
+
       if (resetError) {
+        console.error('Password reset error:', resetError);
         error = resetError.message;
       } else {
+        console.log('Password reset email sent successfully');
         success = 'Password reset link sent! Check your email.';
         showForgotPassword = false;
       }
     } catch (e) {
+      console.error('Password reset exception:', e);
       error = 'Failed to send reset email. Please try again.';
     } finally {
       loading = false;
@@ -62,178 +70,119 @@
   }
 </script>
 
-<div class="signin-container">
-  <div class="signin-box">
-    <h1>FSC Portal</h1>
-    <p class="subtitle">Staff Sign In</p>
-    
-    <form onsubmit={(e) => { e.preventDefault(); showForgotPassword ? handleForgotPassword() : handleSignIn(); }}>
-      {#if error}
-        <div class="error">{error}</div>
-      {/if}
+<div class="min-h-screen bg-gradient-to-br from-slate-50 to-blue-50 flex items-center justify-center px-4">
+  <div class="max-w-md w-full">
+    <!-- Logo and Branding -->
+    <div class="text-center mb-8">
+      <div class="mx-auto mb-6 flex h-16 w-16 items-center justify-center rounded-2xl bg-white shadow-lg border border-slate-200">
+        <img src="/400PngdpiLogo.png" alt="Fresh Start Counseling Logo" class="h-12 w-auto object-contain" />
+      </div>
+      <h1 class="text-2xl font-bold text-fsc-navy-900">Fresh Start Counseling</h1>
+      <p class="text-slate-600 mt-1 text-sm">Staff Portal</p>
+    </div>
 
-      {#if success}
-        <div class="success">{success}</div>
-      {/if}
-
-      <div class="form-group">
-        <label for="email">Email</label>
-        <input
-          id="email"
-          type="email"
-          bind:value={email}
-          placeholder="your.email@fscnj.com"
-          required
-        />
+    <!-- Login Form -->
+    <div class="bg-white rounded-2xl shadow-xl border border-slate-200 p-8">
+      <div class="mb-8">
+        <h2 class="text-xl font-semibold text-slate-900 text-center">
+          {showForgotPassword ? 'Reset Password' : 'Sign In'}
+        </h2>
+        <p class="text-slate-500 text-center mt-1 text-sm">
+          {showForgotPassword ? 'Enter your email to receive a reset link' : 'Access your dashboard'}
+        </p>
       </div>
 
-      {#if !showForgotPassword}
-        <div class="form-group">
-          <label for="password">Password</label>
+      <form onsubmit={(e) => { e.preventDefault(); showForgotPassword ? handleForgotPassword() : handleSignIn(); }}>
+        {#if error}
+          <div class="mb-4 p-4 rounded-xl bg-red-50 border border-red-200 text-red-800 text-sm">
+            <div class="flex items-center gap-2">
+              <svg class="h-4 w-4 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {error}
+            </div>
+          </div>
+        {/if}
+
+        {#if success}
+          <div class="mb-4 p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 text-sm">
+            <div class="flex items-center gap-2">
+              <svg class="h-4 w-4 text-emerald-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+              </svg>
+              {success}
+            </div>
+          </div>
+        {/if}
+
+        <!-- Email Field -->
+        <div class="mb-4">
+          <label for="email" class="block text-sm font-medium text-slate-700 mb-2">Email</label>
           <input
-            id="password"
-            type="password"
-            bind:value={password}
-            placeholder="••••••••"
+            id="email"
+            type="email"
+            bind:value={email}
+            placeholder="your.email@fscnj.com"
             required
+            class="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all text-sm"
           />
         </div>
-      {/if}
 
-      <button type="submit" disabled={loading}>
-        {#if loading}
-          {showForgotPassword ? 'Sending...' : 'Signing in...'}
-        {:else}
-          {showForgotPassword ? 'Send Reset Link' : 'Sign In'}
+        <!-- Password Field (only show if not forgot password) -->
+        {#if !showForgotPassword}
+          <div class="mb-6">
+            <label for="password" class="block text-sm font-medium text-slate-700 mb-2">Password</label>
+            <input
+              id="password"
+              type="password"
+              bind:value={password}
+              placeholder="Enter your password"
+              required
+              class="w-full px-3 py-2.5 rounded-lg border border-slate-300 bg-white text-slate-900 placeholder-slate-400 focus:border-blue-500 focus:ring-1 focus:ring-blue-500 focus:outline-none transition-all text-sm"
+            />
+          </div>
         {/if}
-      </button>
 
-      <div class="forgot-password-toggle">
+        <!-- Submit Button -->
         <button
-          type="button"
-          class="text-link"
-          onclick={() => { showForgotPassword = !showForgotPassword; error = ''; success = ''; }}
+          type="submit"
+          disabled={loading}
+          class="w-full bg-blue-600 text-white font-medium py-2.5 px-4 rounded-lg hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:ring-offset-2 transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2 text-sm"
         >
-          {showForgotPassword ? '← Back to Sign In' : 'Forgot Password?'}
+          {#if loading}
+            <div class="spinner h-5 w-5 border-2"></div>
+            {showForgotPassword ? 'Sending...' : 'Signing in...'}
+          {:else}
+            {#if showForgotPassword}
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 4.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+              Send Reset Link
+            {:else}
+              <svg class="h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
+              </svg>
+              Sign In
+            {/if}
+          {/if}
         </button>
-      </div>
-    </form>
+
+        <!-- Forgot Password Toggle -->
+        <div class="mt-6 text-center">
+          <button
+            type="button"
+            onclick={() => { showForgotPassword = !showForgotPassword; error = ''; success = ''; }}
+            class="text-blue-600 hover:text-blue-700 text-sm transition-colors"
+          >
+            {showForgotPassword ? '← Back to Sign In' : 'Forgot your password?'}
+          </button>
+        </div>
+      </form>
+    </div>
+
+    <!-- Footer -->
+    <div class="text-center mt-8 text-sm text-slate-500">
+      <p>Need help? Contact support at <a href="mailto:support@fscnj.com" class="text-blue-600 hover:text-blue-700">support@fscnj.com</a></p>
+    </div>
   </div>
 </div>
-
-<style>
-  .signin-container {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  }
-  
-  .signin-box {
-    background: white;
-    padding: 3rem;
-    border-radius: 12px;
-    box-shadow: 0 10px 40px rgba(0,0,0,0.2);
-    width: 100%;
-    max-width: 400px;
-  }
-  
-  h1 {
-    margin: 0 0 0.5rem 0;
-    color: #333;
-    text-align: center;
-  }
-  
-  .subtitle {
-    text-align: center;
-    color: #666;
-    margin-bottom: 2rem;
-  }
-  
-  .form-group {
-    margin-bottom: 1.5rem;
-  }
-  
-  label {
-    display: block;
-    margin-bottom: 0.5rem;
-    color: #333;
-    font-weight: 500;
-  }
-  
-  input {
-    width: 100%;
-    padding: 0.75rem;
-    border: 2px solid #e0e0e0;
-    border-radius: 6px;
-    font-size: 1rem;
-    transition: border-color 0.2s;
-  }
-  
-  input:focus {
-    outline: none;
-    border-color: #667eea;
-  }
-  
-  button {
-    width: 100%;
-    padding: 0.875rem;
-    background: #667eea;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    font-size: 1rem;
-    font-weight: 600;
-    cursor: pointer;
-    transition: background 0.2s;
-  }
-  
-  button:hover:not(:disabled) {
-    background: #5568d3;
-  }
-  
-  button:disabled {
-    background: #ccc;
-    cursor: not-allowed;
-  }
-  
-  .error {
-    background: #fee;
-    color: #c33;
-    padding: 0.75rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .success {
-    background: #e6ffe6;
-    color: #2d7a2d;
-    padding: 0.75rem;
-    border-radius: 6px;
-    margin-bottom: 1rem;
-    font-size: 0.9rem;
-  }
-
-  .forgot-password-toggle {
-    margin-top: 1rem;
-    text-align: center;
-  }
-
-  .text-link {
-    background: none;
-    border: none;
-    color: #667eea;
-    cursor: pointer;
-    font-size: 0.9rem;
-    padding: 0.5rem;
-    text-decoration: none;
-    transition: color 0.2s;
-  }
-
-  .text-link:hover {
-    color: #5568d3;
-    text-decoration: underline;
-  }
-</style>

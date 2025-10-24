@@ -1,0 +1,13 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm run build:*)",
+      "Read(//var/folders/nx/9k5gt6ld10x_clbm25c69gfh0000gn/T/TemporaryItems/NSIRD_screencaptureui_vNqlYr/**)",
+      "Bash(git add:*)",
+      "Bash(git commit -m \"$(cat <<''EOF''\nfeat: comprehensive UI redesign with modern components\n\n- Add reusable components (StatCard, StatusBadge, SessionCard, UserAvatar)\n- Redesign login page with gradient hero and magic link UI\n- Redesign dashboard with stat cards, quick actions, and improved tables\n- Redesign sessions page with filters, search, and status badges\n- Redesign import page with enhanced upload flow and results display\n- Redesign billing and reports pages with preview placeholders\n- Add FSC brand colors (navy theme) and status colors to app.css\n- Update global styles with gradient background\n- Fix TypeScript errors (unused imports)\n- Fix Svelte 5 deprecations (on:click → onclick)\n- Fix accessibility issues (label associations)\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)\n\nCo-Authored-By: Claude <noreply@anthropic.com>\nEOF\n)\")",
+      "Read(//Users/dymirtatem/Desktop/Projects/fsc-portal/**)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}

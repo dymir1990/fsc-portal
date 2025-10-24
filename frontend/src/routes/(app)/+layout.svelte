@@ -1,10 +1,12 @@
 <script lang="ts">
   import Sidebar from '$lib/components/Sidebar.svelte';
   import Topbar from '$lib/components/Topbar.svelte';
+  import FloatingRoleSwitcher from '$lib/components/FloatingRoleSwitcher.svelte';
   import { supabase } from '$lib/supabaseClient';
   import { onMount } from 'svelte';
   import { goto } from '$app/navigation';
   import { env } from '$env/dynamic/public';
+  import { browser } from '$app/environment';
   import '../../app.css';
 
   let userRole = $state<string>('admin');
@@ -15,6 +17,17 @@
 
   onMount(async () => {
     console.log('Layout onMount starting, env:', env);
+
+    // Sync sessionStorage to cookie for server-side access
+    if (browser) {
+      const impersonatedRole = sessionStorage.getItem('impersonatedRole');
+      if (impersonatedRole) {
+        document.cookie = `impersonatedRole=${impersonatedRole}; path=/`;
+      } else {
+        document.cookie = 'impersonatedRole=; path=/; max-age=0'; // Clear cookie
+      }
+    }
+
     const { data: { session } } = await supabase.auth.getSession();
     console.log('Session data:', session);
 
@@ -96,5 +109,10 @@
         <slot />
       </main>
     </div>
+
+    <!-- Floating Role Switcher (will only show for admins) -->
+    {#if userRole === 'admin'}
+      <FloatingRoleSwitcher />
+    {/if}
   </div>
 {/if}

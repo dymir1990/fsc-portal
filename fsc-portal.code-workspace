@@ -27,7 +27,8 @@
     },
     "svelte.plugin.svelte.compilerWarnings": {
       "a11y-no-onchange": "ignore"
-    }
+    },
+    "cursorpyright.analysis.typeCheckingMode": "basic"
   },
   "extensions": {
     "recommendations": [

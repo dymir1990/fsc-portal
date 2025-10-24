@@ -1,0 +1,14 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(cat:*)",
+      "Read(//var/folders/nx/9k5gt6ld10x_clbm25c69gfh0000gn/T/TemporaryItems/NSIRD_screencaptureui_09XQPi/**)",
+      "Bash(git add:*)",
+      "Bash(git commit:*)",
+      "Bash(npm run build:*)",
+      "Bash(npm run check:*)"
+    ],
+    "deny": [],
+    "ask": []
+  }
+}
