@@ -303,20 +303,41 @@ async def import_simplepractice(file: UploadFile = File(...)):
                 # Normalize time format - ensure it's in HH:MM format
                 if start_time:
                     try:
+                        # Remove AM/PM suffix and handle 12-hour format
+                        time_str = start_time.upper().strip()
+                        is_pm = 'PM' in time_str
+                        is_am = 'AM' in time_str
+                        time_str = time_str.replace('AM', '').replace('PM', '').strip()
+
                         # Try to parse various time formats
-                        if ":" in start_time:
-                            time_parts = start_time.split(":")
+                        if ":" in time_str:
+                            time_parts = time_str.split(":")
                             if len(time_parts) >= 2:
                                 hour = int(time_parts[0])
-                                minute = int(time_parts[1])
+                                minute = int(time_parts[1].split()[0])  # Handle any trailing text
+
+                                # Convert 12-hour to 24-hour if AM/PM was present
+                                if is_pm and hour != 12:
+                                    hour += 12
+                                elif is_am and hour == 12:
+                                    hour = 0
+
                                 start_time = f"{hour:02d}:{minute:02d}"
                         else:
                             # If no colon, assume it's just hours
-                            hour = int(start_time)
+                            hour = int(time_str)
+                            if is_pm and hour != 12:
+                                hour += 12
+                            elif is_am and hour == 12:
+                                hour = 0
                             start_time = f"{hour:02d}:00"
                     except (ValueError, IndexError):
                         # If parsing fails, use default
                         start_time = "09:00"
+                else:
+                    # CRITICAL FIX: If no start_time provided, use default
+                    # This prevents empty string from violating NOT NULL constraint
+                    start_time = "09:00"
 
                 end_time = row.get("End time", row.get("end_time", "")).strip()
                 minutes_str = row.get("Minutes", row.get("minutes", "")).strip()
