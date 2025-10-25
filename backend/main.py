@@ -340,6 +340,45 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     start_time = "09:00"
 
                 end_time = row.get("End time", row.get("end_time", "")).strip()
+
+                # Normalize end_time format - same logic as start_time
+                if end_time:
+                    try:
+                        # Remove AM/PM suffix and handle 12-hour format
+                        time_str = end_time.upper().strip()
+                        is_pm = 'PM' in time_str
+                        is_am = 'AM' in time_str
+                        time_str = time_str.replace('AM', '').replace('PM', '').strip()
+
+                        # Try to parse various time formats
+                        if ":" in time_str:
+                            time_parts = time_str.split(":")
+                            if len(time_parts) >= 2:
+                                hour = int(time_parts[0])
+                                minute = int(time_parts[1].split()[0])  # Handle any trailing text
+
+                                # Convert 12-hour to 24-hour if AM/PM was present
+                                if is_pm and hour != 12:
+                                    hour += 12
+                                elif is_am and hour == 12:
+                                    hour = 0
+
+                                end_time = f"{hour:02d}:{minute:02d}"
+                        else:
+                            # If no colon, assume it's just hours
+                            hour = int(time_str)
+                            if is_pm and hour != 12:
+                                hour += 12
+                            elif is_am and hour == 12:
+                                hour = 0
+                            end_time = f"{hour:02d}:00"
+                    except (ValueError, IndexError):
+                        # If parsing fails, calculate from start_time + minutes if available
+                        end_time = None
+                else:
+                    # Will calculate from start_time + minutes later if available
+                    end_time = None
+
                 minutes_str = row.get("Minutes", row.get("minutes", "")).strip()
 
                 # Handle BOTH "Primary Insurance" (new format) and "Primary insurance" (old format)
@@ -418,6 +457,27 @@ async def import_simplepractice(file: UploadFile = File(...)):
                 else:
                     minutes = parse_time_to_minutes(start_time, end_time)
 
+                # Calculate end_time if missing (based on start_time + minutes)
+                if not end_time and start_time and minutes:
+                    try:
+                        # Parse start_time to calculate end_time
+                        start_parts = start_time.split(":")
+                        start_hour = int(start_parts[0])
+                        start_min = int(start_parts[1])
+
+                        # Add minutes
+                        total_minutes = start_hour * 60 + start_min + minutes
+                        end_hour = (total_minutes // 60) % 24  # Wrap around at 24 hours
+                        end_min = total_minutes % 60
+
+                        end_time = f"{end_hour:02d}:{end_min:02d}"
+                    except (ValueError, IndexError):
+                        # If calculation fails, use default (1 hour after start)
+                        end_time = "10:00"
+                elif not end_time:
+                    # If still no end_time, use default
+                    end_time = "10:00"
+
                 # Find or create provider
                 provider = find_or_create_provider(provider_name)
                 if not provider:
@@ -473,6 +533,7 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     "client_id": client["id"],
                     "session_date": formatted_date,
                     "start_time": start_time,  # Already normalized above
+                    "end_time": end_time,  # Already normalized and calculated above
                     "minutes": minutes,
                     "note_submitted": note_submitted,
                     "billing_status": "completed" if note_submitted else "pending",
