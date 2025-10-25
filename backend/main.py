@@ -299,6 +299,24 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     if len(date_parts) == 2:
                         service_date = date_parts[0]  # Just the date part
                         start_time = date_parts[1]     # Just the time part
+                
+                # Normalize time format - ensure it's in HH:MM format
+                if start_time:
+                    try:
+                        # Try to parse various time formats
+                        if ":" in start_time:
+                            time_parts = start_time.split(":")
+                            if len(time_parts) >= 2:
+                                hour = int(time_parts[0])
+                                minute = int(time_parts[1])
+                                start_time = f"{hour:02d}:{minute:02d}"
+                        else:
+                            # If no colon, assume it's just hours
+                            hour = int(start_time)
+                            start_time = f"{hour:02d}:00"
+                    except (ValueError, IndexError):
+                        # If parsing fails, use default
+                        start_time = "09:00"
 
                 end_time = row.get("End time", row.get("end_time", "")).strip()
                 minutes_str = row.get("Minutes", row.get("minutes", "")).strip()
@@ -433,6 +451,7 @@ async def import_simplepractice(file: UploadFile = File(...)):
                     "provider_id": provider["id"],
                     "client_id": client["id"],
                     "session_date": formatted_date,
+                    "start_time": start_time,  # Already normalized above
                     "minutes": minutes,
                     "note_submitted": note_submitted,
                     "billing_status": "completed" if note_submitted else "pending",
