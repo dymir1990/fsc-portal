@@ -194,7 +194,7 @@
             <span>View All Sessions</span>
           </a>
           <a
-            href="/import"
+            href="/case-manager/import"
             class="flex items-center gap-3 rounded-lg border border-slate-200 p-3 text-slate-700 hover:bg-slate-50 transition-colors"
           >
             <svg class="h-5 w-5 text-slate-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">

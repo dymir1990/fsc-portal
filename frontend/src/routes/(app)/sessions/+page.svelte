@@ -120,7 +120,7 @@
       <p class="mt-1 text-slate-600">Manage and track all billing sessions</p>
     </div>
     <a
-      href="/import"
+      href="/case-manager/import"
       class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-teal-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
     >
       <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">

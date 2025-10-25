@@ -11,7 +11,7 @@
 
   let { userRole = 'admin', isMobileMenuOpen = false } = $props<{ userRole?: string; isMobileMenuOpen?: boolean }>();
 
-  // Nordic Clean Navigation - 4 Items Only
+  // Core Navigation Items
   const allNavItems: NavItem[] = [
     {
       label: 'Revenue',
@@ -23,6 +23,12 @@
       label: 'Sessions',
       href: '/sessions',
       icon: 'clipboard',
+      roles: ['admin', 'director', 'billing']
+    },
+    {
+      label: 'Import CSV',
+      href: '/case-manager/import',
+      icon: 'upload',
       roles: ['admin', 'director', 'billing']
     },
     {

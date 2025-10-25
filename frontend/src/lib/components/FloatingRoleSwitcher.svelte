@@ -5,7 +5,7 @@
   let isOpen = $state(false);
   let isDragging = $state(false);
   let dragOffset = $state({ x: 0, y: 0 });
-  let position = $state({ x: 20, y: 20 }); // Bottom-right corner offset
+  let position = $state({ x: 20, y: 20 }); // Position from top-left
   let currentRole = $state('admin');
   let currentUser = $state('You');
 
@@ -132,12 +132,17 @@
       default: return '👤';
     }
   }
+
+  // Determine if dropdown should appear above button
+  const shouldShowAbove = $derived(
+    browser && typeof window !== 'undefined' && position.y > window.innerHeight / 2
+  );
 </script>
 
 <!-- Floating Role Switcher -->
 <div
-  class="fixed z-50 transition-all duration-200 {isDragging ? 'scale-105' : 'hover:scale-105'}"
-  style="left: {position.x}px; top: {position.y}px;"
+  class="fixed transition-all duration-200 {isDragging ? 'scale-105' : 'hover:scale-105'}"
+  style="left: {position.x}px; top: {position.y}px; z-index: 9999;"
 >
   <!-- Drag Handle -->
   <div
@@ -175,7 +180,7 @@
 
   <!-- Dropdown Menu -->
   {#if isOpen}
-    <div class="absolute top-full left-0 mt-2 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
+    <div class="absolute {shouldShowAbove ? 'bottom-full mb-2' : 'top-full mt-2'} left-0 w-64 bg-white rounded-xl shadow-xl border border-slate-200 overflow-hidden">
       <div class="p-3 bg-slate-50 border-b border-slate-200">
         <h3 class="text-sm font-semibold text-slate-700">Switch Role</h3>
         <p class="text-xs text-slate-500 mt-1">Test different user permissions</p>
@@ -215,7 +220,8 @@
 <!-- Click outside to close -->
 {#if isOpen}
   <button
-    class="fixed inset-0 z-40"
+    class="fixed inset-0"
+    style="z-index: 9998;"
     onclick={() => isOpen = false}
     onkeydown={(e) => e.key === 'Escape' && (isOpen = false)}
     tabindex="-1"
@@ -223,9 +229,3 @@
   ></button>
 {/if}
 
-<style>
-  /* Ensure the floating element stays above everything */
-  .fixed {
-    z-index: 9999;
-  }
-</style>

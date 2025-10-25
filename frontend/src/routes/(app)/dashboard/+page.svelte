@@ -100,7 +100,7 @@
     </div>
     <div class="flex gap-3">
       <a
-        href="/import"
+        href="/case-manager/import"
         class="flex items-center gap-2 rounded-xl bg-gradient-to-r from-blue-600 to-teal-600 px-6 py-2.5 text-sm font-semibold text-white shadow-lg transition-all hover:shadow-xl hover:scale-[1.02]"
       >
         <svg class="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -169,7 +169,7 @@
       </a>
 
       <a
-        href="/import"
+        href="/case-manager/import"
         class="group relative overflow-hidden rounded-2xl border border-slate-200 bg-gradient-to-br from-emerald-50 to-teal-50 p-6 shadow-sm transition-all hover:shadow-lg hover:scale-[1.02]"
       >
         <div class="relative z-10">
@@ -243,7 +243,7 @@
           <p class="text-slate-600">No sessions yet</p>
           <p class="mt-1 text-sm text-slate-500">Import a CSV to get started</p>
           <a
-            href="/import"
+            href="/case-manager/import"
             class="mt-4 rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white hover:bg-blue-700"
           >
             Upload CSV
